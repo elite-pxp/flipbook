@@ -129,10 +129,15 @@
     return data;
   }
 
-  function updatePageIndicator(current, total) {
+  function updatePageIndicator(currentIndex, total) {
     const indicator = document.getElementById("page-indicator");
     if (!indicator) return;
-    indicator.textContent = `Page ${current} / ${total}`;
+    const interiorTotal = Math.max(0, total - 1);
+    if (currentIndex <= 0) {
+      indicator.textContent = interiorTotal > 0 ? `Cover / ${interiorTotal}` : "Cover / 0";
+      return;
+    }
+    indicator.textContent = `Page ${currentIndex} / ${interiorTotal}`;
   }
 
   function bindViewerButtons(total) {
@@ -161,8 +166,9 @@
     const go = () => {
       if (!pageFlip || !gotoInput) return;
       const page = Number(gotoInput.value);
-      if (!Number.isFinite(page) || page < 1 || page > total) return;
-      pageFlip.flip(page - 1);
+      const interiorTotal = Math.max(0, total - 1);
+      if (!Number.isFinite(page) || page < 1 || page > interiorTotal) return;
+      pageFlip.flip(page);
     };
 
     if (gotoBtn) gotoBtn.onclick = go;
@@ -364,7 +370,7 @@
     }
 
     const total = pagesCache.length;
-    updatePageIndicator(1, total);
+    updatePageIndicator(0, total);
     bindViewerButtons(total);
 
     function applyCoverShiftByIndex(index) {
@@ -393,7 +399,7 @@
     }
 
     pageFlip.on("flip", (e) => {
-      updatePageIndicator(e.data + 1, total);
+      updatePageIndicator(e.data, total);
       applyCoverShiftByIndex(e.data);
       if (flipAudio) {
         flipAudio.currentTime = 0;
