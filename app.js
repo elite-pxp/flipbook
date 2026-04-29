@@ -154,6 +154,16 @@
     const gotoBtn = document.getElementById("goto-btn");
     const downloadBtn = document.getElementById("download-pdf");
     const shareBtn = document.getElementById("share-page");
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+    if (isMobile) {
+      [prev, next, gotoInput, gotoBtn, downloadBtn, shareBtn].forEach((el) => {
+        if (el) el.style.display = "none";
+      });
+      if (gotoSelect) gotoSelect.style.display = "inline-block";
+    } else if (gotoSelect) {
+      gotoSelect.style.display = "none";
+    }
 
     if (home) {
       home.onclick = () => {
@@ -193,7 +203,7 @@
       };
     }
 
-    if (downloadBtn) {
+    if (downloadBtn && !isMobile) {
       downloadBtn.onclick = async () => {
         if (!pagesCache.length) return;
         downloadBtn.disabled = true;
@@ -210,7 +220,7 @@
       };
     }
 
-    if (shareBtn) {
+    if (shareBtn && !isMobile) {
       shareBtn.onclick = async () => {
         const url = SHARE_URL;
         const originalText = shareBtn.textContent || "Copy Link";
