@@ -100,6 +100,7 @@
   let flipAudioPool = [];
   let flipAudioIndex = 0;
   let lastFlipSoundAt = 0;
+  let mobileZoom = 1;
 
   function escapeHtml(value) {
     return String(value)
@@ -272,6 +273,14 @@
           } catch (_) {
             prompt("Copy this link:", SHARE_URL);
           }
+        }
+        if (action === "zoomin" || action === "zoomout" || action === "zoomreset") {
+          const container = document.getElementById("flipbook");
+          if (!container) return;
+          if (action === "zoomin") mobileZoom = Math.min(2.2, mobileZoom + 0.2);
+          if (action === "zoomout") mobileZoom = Math.max(1, mobileZoom - 0.2);
+          if (action === "zoomreset") mobileZoom = 1;
+          container.style.setProperty("--mobile-zoom", String(mobileZoom));
         }
       };
     }
@@ -448,7 +457,7 @@
       maxHeight: isMobile ? mobilePageHeight : desktopPageHeight,
       maxShadowOpacity: 0.6,
       showCover: true,
-      mobileScrollSupport: true,
+      mobileScrollSupport: !isMobile,
       flippingTime: 900,
       usePortrait: true,
       autoSize: true
@@ -467,6 +476,12 @@
     }
 
     const total = pagesCache.length;
+    if (isMobile) {
+      container.style.setProperty("--mobile-zoom", String(mobileZoom));
+    } else {
+      mobileZoom = 1;
+      container.style.setProperty("--mobile-zoom", "1");
+    }
     updatePageIndicator(0, total);
     bindViewerButtons(total);
 

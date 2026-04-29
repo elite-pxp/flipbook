@@ -397,13 +397,25 @@ body {
 }
 
 @media (max-width: 768px) {
+  body {
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .app-body {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
   .viewer-main,
   .admin-main {
     padding: 8px;
   }
 
   .viewer-main {
-    padding-top: 52px;
+    padding-top: 44px;
     padding-bottom: 6px;
   }
 
@@ -438,7 +450,7 @@ body {
     flex: 1;
     min-height: 0;
     padding: 0 8px;
-    margin-top: -4px;
+    margin-top: -12px;
     margin-bottom: 4px;
   }
 
@@ -486,5 +498,12 @@ body {
   #flipbook .page * {
     font-size: 0 !important;
     line-height: 0 !important;
+  }
+
+  #flipbook {
+    transform: scale(var(--mobile-zoom, 1));
+    transform-origin: top center;
+    transition: transform 180ms ease;
+    touch-action: pan-y pinch-zoom;
   }
 }
