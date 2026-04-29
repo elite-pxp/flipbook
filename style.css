@@ -51,13 +51,11 @@ body {
 }
 
 .brand-logo {
-  position: fixed;
-  top: 8px;
-  left: 10px;
-  width: 82px;
+  width: 56px;
+  flex: 0 0 auto;
   height: auto;
   object-fit: contain;
-  z-index: 20;
+  z-index: 2;
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.16));
   pointer-events: none;
 }
@@ -142,30 +140,33 @@ body {
 }
 
 .viewer-toolbar {
-  flex-direction: column;
-  justify-content: center;
-  position: absolute;
-  top: 8px;
-  left: 108px;
-  right: 10px;
-  z-index: 25;
-  background: transparent;
-  backdrop-filter: none;
-  padding: 0;
-  margin-bottom: 0;
+  flex-direction: row;
   align-items: center;
+  justify-content: flex-start;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 25;
+  background: rgba(243, 244, 246, 0.86);
+  backdrop-filter: blur(3px);
+  padding: 4px 6px;
+  margin-bottom: 0;
+  gap: 10px;
 }
 
 .page-status {
-  width: 100%;
-  text-align: center;
-  margin-bottom: 2px;
+  width: auto;
+  text-align: left;
+  flex: 0 0 auto;
+  margin-bottom: 0;
 }
 
 .page-controls {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 #goto-page {
@@ -183,7 +184,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 0 48px;
-  margin-top: 58px;
+  margin-top: 8px;
   margin-bottom: 8px;
   overflow: hidden;
 }
@@ -406,31 +407,35 @@ body {
   }
 
   .viewer-main {
-    padding-top: 36px;
+    padding-top: 4px;
     padding-bottom: 6px;
   }
 
   .viewer-toolbar,
   .admin-header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
   }
 
   .viewer-toolbar {
     position: sticky;
     top: 0;
-    left: auto;
-    right: auto;
+    left: 0;
+    right: 0;
     width: 100%;
     background: rgba(243, 244, 246, 0.92);
     backdrop-filter: blur(4px);
-    padding: 2px 0 4px;
-    margin-bottom: 4px;
+    padding: 4px 6px;
+    margin-bottom: 2px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    gap: 8px;
   }
 
   .page-controls {
-    width: 100%;
-    flex-wrap: wrap;
+    width: auto;
+    flex-wrap: nowrap;
+    gap: 6px;
   }
 
   .book-shell {
@@ -454,12 +459,8 @@ body {
   }
 
   .brand-logo {
-    position: sticky;
-    top: 4px;
-    left: 8px;
-    width: 56px;
-    margin-left: 8px;
-    z-index: 30;
+    width: 48px;
+    margin-left: 0;
   }
 
   .brand-title {
@@ -467,6 +468,10 @@ body {
     font-size: 13px;
     max-width: 90vw;
     text-align: center;
+  }
+
+  .page-status {
+    display: none;
   }
 
   #prev-page,
