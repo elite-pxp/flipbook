@@ -6,6 +6,7 @@
   const BUCKET = "flipbook";
   const MAX_PAGES = 200;
   const IMAGE_QUALITY = 0.78;
+  const SHARE_URL = "https://elite-pxp.github.io/flipbook/";
   const IS_ADMIN = location.pathname.endsWith("admin.html");
   const PREVIEW_SEED_PAGES = [
     {
@@ -150,6 +151,7 @@
     const gotoBtn = document.getElementById("goto-btn");
     const downloadBtn = document.getElementById("download-pdf");
     const shareBtn = document.getElementById("share-page");
+    const shareFeedback = document.getElementById("share-feedback");
 
     if (home) {
       home.onclick = () => {
@@ -197,26 +199,25 @@
 
     if (shareBtn) {
       shareBtn.onclick = async () => {
-        const url = window.location.href;
-        const originalLabel = shareBtn.textContent || "Share";
+        const url = SHARE_URL;
         try {
-          if (navigator.share) {
-            await navigator.share({
-              title: document.title,
-              text: "Check out this flipbook page",
-              url
-            });
-          } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
             await navigator.clipboard.writeText(url);
-            shareBtn.textContent = "Link copied";
-            setTimeout(() => {
-              shareBtn.textContent = originalLabel;
-            }, 1400);
+            if (shareFeedback) {
+              shareFeedback.textContent = "Link copied";
+              setTimeout(() => {
+                if (shareFeedback.textContent === "Link copied") {
+                  shareFeedback.textContent = "";
+                }
+              }, 1600);
+            }
           } else {
             prompt("Copy this link:", url);
           }
         } catch (_) {
-          // User cancel or unsupported state; keep silent.
+          if (shareFeedback) {
+            shareFeedback.textContent = "Copy failed. Try again.";
+          }
         }
       };
     }

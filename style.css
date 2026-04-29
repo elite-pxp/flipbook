@@ -144,6 +144,14 @@ body {
   align-items: center;
 }
 
+.share-feedback {
+  min-height: 18px;
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #065f46;
+  text-align: center;
+}
+
 #goto-page {
   width: 72px;
   padding: 8px;
