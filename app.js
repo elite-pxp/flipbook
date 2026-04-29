@@ -97,7 +97,9 @@
 
   let pagesCache = [];
   let pageFlip = null;
-  let flipAudio = null;
+  let flipAudioPool = [];
+  let flipAudioIndex = 0;
+  let lastFlipSoundAt = 0;
 
   function escapeHtml(value) {
     return String(value)
@@ -372,10 +374,14 @@
 
     pageFlip.loadFromHTML(container.querySelectorAll(".page"));
 
-    if (!flipAudio) {
-      flipAudio = new Audio(FLIP_SOUND_URL);
-      flipAudio.preload = "auto";
-      flipAudio.volume = 0.38;
+    if (!flipAudioPool.length) {
+      flipAudioPool = Array.from({ length: 3 }, () => {
+        const audio = new Audio(FLIP_SOUND_URL);
+        audio.preload = "auto";
+        audio.volume = 0.38;
+        audio.load();
+        return audio;
+      });
     }
 
     const total = pagesCache.length;
@@ -410,16 +416,23 @@
     pageFlip.on("flip", (e) => {
       updatePageIndicator(e.data, total);
       applyCoverShiftByIndex(e.data);
-      if (flipAudio) {
-        flipAudio.currentTime = 0;
-        flipAudio.play().catch(() => {});
-      }
     });
 
     pageFlip.on("changeState", () => {
       if (!shell) return;
-      shell.classList.toggle("is-flipping", pageFlip.getState() !== "read");
-      if (pageFlip.getState() === "read") {
+      const state = pageFlip.getState();
+      shell.classList.toggle("is-flipping", state !== "read");
+      if (state === "flipping" || state === "user_fold" || state === "fold_corner") {
+        const now = performance.now();
+        if (now - lastFlipSoundAt > 150 && flipAudioPool.length) {
+          const audio = flipAudioPool[flipAudioIndex % flipAudioPool.length];
+          flipAudioIndex += 1;
+          lastFlipSoundAt = now;
+          audio.currentTime = 0;
+          audio.play().catch(() => {});
+        }
+      }
+      if (state === "read") {
         updateCoverCentering();
       }
     });
