@@ -293,6 +293,23 @@ body {
   overflow: hidden !important;
 }
 
+@media (min-width: 769px) {
+  .book-shell {
+    padding-top: 18px;
+  }
+
+  .page {
+    overflow: visible;
+  }
+
+  #flipbook .stf__parent,
+  #flipbook .stf__wrapper,
+  #flipbook .stf__block,
+  #flipbook .stf__item {
+    overflow: visible !important;
+  }
+}
+
 #flipbook .stf__item.-left .page {
   box-shadow:
     inset -18px 0 24px -16px rgba(0, 0, 0, 0.3),
