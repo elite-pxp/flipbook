@@ -425,8 +425,8 @@
     const toolbarHeight = toolbar ? toolbar.getBoundingClientRect().height : 0;
     const footer = document.querySelector(".brand-title");
     const footerHeight = footer ? footer.getBoundingClientRect().height : 0;
-    const availableWidth = Math.max(520, Math.min(1100, window.innerWidth - 360));
-    const availableHeight = Math.max(320, Math.min(780, window.innerHeight - toolbarHeight - 140));
+    const availableWidth = Math.max(520, Math.min(980, window.innerWidth - 420));
+    const availableHeight = Math.max(320, Math.min(760, window.innerHeight - toolbarHeight - 150));
     const desktopPageWidthByWidth = availableWidth / 2;
     const desktopPageWidthByHeight = availableHeight / pageAspect;
     const desktopPageWidth = Math.max(320, Math.floor(Math.min(desktopPageWidthByWidth, desktopPageWidthByHeight)));
@@ -441,17 +441,17 @@
     pageFlip = new St.PageFlip(container, {
       width: isMobile ? mobileFinalWidth : desktopPageWidth,
       height: isMobile ? mobilePageHeight : desktopPageHeight,
-      size: isMobile ? "stretch" : "fixed",
-      minWidth: isMobile ? 180 : 280,
+      size: "stretch",
+      minWidth: isMobile ? 220 : 280,
       maxWidth: isMobile ? mobileFinalWidth : desktopPageWidth,
-      minHeight: isMobile ? 260 : 320,
+      minHeight: isMobile ? 280 : 360,
       maxHeight: isMobile ? mobilePageHeight : desktopPageHeight,
       maxShadowOpacity: 0.6,
       showCover: true,
       mobileScrollSupport: true,
       flippingTime: 900,
       usePortrait: true,
-      autoSize: isMobile
+      autoSize: true
     });
 
     pageFlip.loadFromHTML(container.querySelectorAll(".page"));
@@ -469,31 +469,6 @@
     const total = pagesCache.length;
     updatePageIndicator(0, total);
     bindViewerButtons(total);
-
-    function applyCoverShiftByIndex(index) {
-      if (!pageFlip) return;
-      const bounds = pageFlip.getBoundsRect();
-      const lastIndex = Math.max(0, pageFlip.getPageCount() - 1);
-      const isFrontCover = index === 0;
-      const isBackCover = index === lastIndex;
-      const isEdgeCover = isFrontCover || isBackCover;
-      const isPortrait = pageFlip.getOrientation() === "portrait";
-
-      if (isEdgeCover && !isPortrait) {
-        const shift = Math.round(bounds.pageWidth / 2);
-        const signedShift = isFrontCover ? -shift : shift;
-        container.style.setProperty("--cover-shift", `${signedShift}px`);
-        container.classList.remove("cover-intro");
-      } else {
-        container.style.setProperty("--cover-shift", "0px");
-        container.classList.remove("cover-intro");
-      }
-    }
-
-    function updateCoverCentering() {
-      if (!pageFlip) return;
-      applyCoverShiftByIndex(pageFlip.getCurrentPageIndex());
-    }
 
     pageFlip.on("flip", (e) => {
       updatePageIndicator(e.data, total);
@@ -513,13 +488,6 @@
           audio.play().catch(() => {});
         }
       }
-      if (state === "read") {
-        updateCoverCentering();
-      }
-    });
-
-    pageFlip.on("changeOrientation", () => {
-      updateCoverCentering();
     });
 
     window.addEventListener("keydown", (e) => {
@@ -528,7 +496,7 @@
       if (e.key === "ArrowRight") pageFlip.flipNext();
     });
 
-    setTimeout(updateCoverCentering, 0);
+    container.style.setProperty("--cover-shift", "0px");
   }
 
   async function compressImage(file) {
