@@ -59,11 +59,11 @@ body {
 
 .brand-title {
   position: fixed;
-  bottom: 10px;
+  bottom: 14px;
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
-  font-size: clamp(11px, 1.15vw, 14px);
+  font-size: clamp(14px, 1.45vw, 19px);
   font-weight: 600;
   line-height: 1;
   color: rgba(31, 41, 55, 0.85);
@@ -418,10 +418,10 @@ body {
   }
 
   .brand-title {
-    bottom: 8px;
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 11px;
+    font-size: 13px;
     max-width: 90vw;
     text-align: center;
   }
