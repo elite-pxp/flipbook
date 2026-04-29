@@ -224,6 +224,8 @@ body {
   transition: none;
   perspective: 2200px;
   will-change: transform;
+  position: relative;
+  z-index: 12;
 }
 
 .edge-nav {
@@ -294,8 +296,17 @@ body {
 }
 
 @media (min-width: 769px) {
+  .viewer-main {
+    padding-top: 16px;
+  }
+
+  .viewer-toolbar {
+    z-index: 6;
+  }
+
   .book-shell {
-    padding-top: 18px;
+    padding-top: 32px;
+    margin-top: 16px;
   }
 
   .page {
