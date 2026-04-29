@@ -62,10 +62,10 @@ body {
 
 .brand-watermark {
   position: fixed;
-  right: 10px;
-  bottom: 8px;
+  right: 5px;
+  bottom: 4px;
   margin: 0;
-  font-size: 11px;
+  font-size: 6px;
   letter-spacing: 0.03em;
   color: rgba(17, 24, 39, 0.7);
   z-index: 35;
