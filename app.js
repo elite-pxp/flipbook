@@ -153,7 +153,6 @@
     const gotoBtn = document.getElementById("goto-btn");
     const downloadBtn = document.getElementById("download-pdf");
     const shareBtn = document.getElementById("share-page");
-    const shareFeedback = document.getElementById("share-feedback");
 
     if (home) {
       home.onclick = () => {
@@ -202,24 +201,22 @@
     if (shareBtn) {
       shareBtn.onclick = async () => {
         const url = SHARE_URL;
+        const originalText = shareBtn.textContent || "Copy Link";
         try {
           if (navigator.clipboard && navigator.clipboard.writeText) {
             await navigator.clipboard.writeText(url);
-            if (shareFeedback) {
-              shareFeedback.textContent = "Link copied";
-              setTimeout(() => {
-                if (shareFeedback.textContent === "Link copied") {
-                  shareFeedback.textContent = "";
-                }
-              }, 1600);
-            }
+            shareBtn.textContent = "Copied";
+            setTimeout(() => {
+              shareBtn.textContent = originalText;
+            }, 1400);
           } else {
             prompt("Copy this link:", url);
           }
         } catch (_) {
-          if (shareFeedback) {
-            shareFeedback.textContent = "Copy failed. Try again.";
-          }
+          shareBtn.textContent = "Copy failed";
+          setTimeout(() => {
+            shareBtn.textContent = originalText;
+          }, 1400);
         }
       };
     }
