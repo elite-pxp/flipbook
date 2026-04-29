@@ -168,7 +168,7 @@
       const page = Number(gotoInput.value);
       const interiorTotal = Math.max(0, total - 1);
       if (!Number.isFinite(page) || page < 1 || page > interiorTotal) return;
-      pageFlip.flip(page);
+      pageFlip.flip(page + 1);
     };
 
     if (gotoBtn) gotoBtn.onclick = go;
