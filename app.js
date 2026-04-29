@@ -302,15 +302,19 @@
 
     const dimensions = await getFlipDimensions(pagesCache);
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const pageAspect = dimensions.height / dimensions.width;
+    const desktopTargetBookWidth = Math.min(window.innerWidth * 0.9, 1900);
+    const desktopPageWidth = Math.round(desktopTargetBookWidth / 2);
+    const desktopPageHeight = Math.round(desktopPageWidth * pageAspect);
 
     pageFlip = new St.PageFlip(container, {
-      width: dimensions.width,
-      height: dimensions.height,
-      size: "stretch",
+      width: isMobile ? dimensions.width : desktopPageWidth,
+      height: isMobile ? dimensions.height : desktopPageHeight,
+      size: isMobile ? "stretch" : "fixed",
       minWidth: isMobile ? 180 : 280,
-      maxWidth: isMobile ? 560 : 1800,
+      maxWidth: isMobile ? 560 : desktopPageWidth,
       minHeight: isMobile ? 260 : 320,
-      maxHeight: isMobile ? 760 : 1300,
+      maxHeight: isMobile ? 760 : desktopPageHeight,
       maxShadowOpacity: 0.6,
       showCover: true,
       mobileScrollSupport: true,

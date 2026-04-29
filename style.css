@@ -109,12 +109,13 @@ body {
 
 .viewer-main,
 .admin-main {
-  max-width: 1600px;
+  max-width: none;
   margin: 0 auto;
   padding: 24px;
 }
 
 .viewer-main {
+  width: 100%;
   padding-top: 88px;
 }
 
@@ -152,11 +153,11 @@ body {
 
 .book-shell {
   position: relative;
-  min-height: 760px;
+  min-height: calc(100vh - 180px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 56px;
+  padding: 0 48px;
 }
 
 .book-shell::after {
@@ -189,7 +190,7 @@ body {
 
 #flipbook {
   width: 100%;
-  max-width: min(92vw, 1500px);
+  max-width: none;
   margin: 0 auto;
   border-radius: 0;
   overflow: visible;
