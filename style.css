@@ -58,19 +58,18 @@ body {
 }
 
 .brand-title {
-  position: fixed;
-  bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
+  position: static;
+  margin: 6px auto 18px;
   font-size: clamp(14px, 1.45vw, 19px);
   font-weight: 600;
   line-height: 1;
   color: rgba(31, 41, 55, 0.85);
   text-shadow: 0 1px 4px rgba(255, 255, 255, 0.5);
-  z-index: 20;
+  z-index: 1;
   pointer-events: none;
   white-space: nowrap;
+  width: fit-content;
+  text-align: center;
 }
 
 .hidden {
@@ -422,9 +421,7 @@ body {
   }
 
   .brand-title {
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
+    margin: 4px auto 14px;
     font-size: 13px;
     max-width: 90vw;
     text-align: center;
