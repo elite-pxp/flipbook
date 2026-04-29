@@ -176,6 +176,14 @@ body {
   border-radius: 8px;
 }
 
+.goto-select {
+  display: none;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
 .book-shell {
   position: relative;
   flex: 1;
@@ -472,8 +480,17 @@ body {
   }
 
   #prev-page,
-  #next-page {
+  #next-page,
+  #download-pdf,
+  #share-page,
+  #goto-page,
+  #goto-btn {
     display: none;
+  }
+
+  .goto-select {
+    display: inline-block;
+    min-width: 96px;
   }
 
   #flipbook .page,
