@@ -60,26 +60,6 @@ body {
   pointer-events: none;
 }
 
-.brand-title {
-  position: static;
-  margin: 6px auto 18px;
-  font-size: clamp(14px, 1.45vw, 19px);
-  font-weight: 600;
-  line-height: 1;
-  color: rgba(31, 41, 55, 0.85);
-  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.5);
-  z-index: 1;
-  pointer-events: none;
-  white-space: nowrap;
-  width: fit-content;
-  text-align: center;
-}
-
-.site-footer {
-  width: 100%;
-  flex-shrink: 0;
-}
-
 .hidden {
   display: none !important;
 }
@@ -469,10 +449,6 @@ body {
   .brand-logo {
     width: 48px;
     margin-left: 0;
-  }
-
-  .brand-title {
-    display: none;
   }
 
   .page-status {
