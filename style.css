@@ -183,10 +183,6 @@ body {
   transition: opacity 220ms ease, transform 220ms ease;
 }
 
-.book-shell.has-flipped::after {
-  opacity: 0.18;
-}
-
 .book-shell.is-flipping::after {
   opacity: 0.26;
   transform: translate(-50%, -50%) scaleX(1.06);

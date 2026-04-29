@@ -392,16 +392,9 @@
       applyCoverShiftByIndex(pageFlip.getCurrentPageIndex());
     }
 
-    function updateSpineState(index) {
-      if (!shell || !pageFlip) return;
-      const current = typeof index === "number" ? index : pageFlip.getCurrentPageIndex();
-      shell.classList.toggle("has-flipped", current > 0);
-    }
-
     pageFlip.on("flip", (e) => {
       updatePageIndicator(e.data + 1, total);
       applyCoverShiftByIndex(e.data);
-      updateSpineState(e.data);
       if (flipAudio) {
         flipAudio.currentTime = 0;
         flipAudio.play().catch(() => {});
@@ -418,7 +411,6 @@
 
     pageFlip.on("changeOrientation", () => {
       updateCoverCentering();
-      updateSpineState();
     });
 
     window.addEventListener("keydown", (e) => {
@@ -428,7 +420,6 @@
     });
 
     setTimeout(updateCoverCentering, 0);
-    setTimeout(updateSpineState, 0);
   }
 
   async function compressImage(file) {
