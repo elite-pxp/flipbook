@@ -369,11 +369,13 @@
   }
 
   function buildPageHtml(pages) {
+    const lastIndex = pages.length - 1;
     return pages
       .map((item, idx) => {
         const loading = idx < 4 ? "eager" : "lazy";
+        const density = idx === 0 || idx === lastIndex ? "hard" : "soft";
         return `
-          <div class="page" data-density="hard">
+          <div class="page" data-density="${density}">
             <img src="${escapeHtml(item.image_url)}" alt="" loading="${loading}" decoding="async" />
           </div>
         `;
@@ -456,9 +458,10 @@
       minHeight: isMobile ? 280 : 360,
       maxHeight: isMobile ? mobilePageHeight : desktopPageHeight,
       maxShadowOpacity: 0.6,
+      drawShadow: true,
       showCover: true,
       mobileScrollSupport: !isMobile,
-      flippingTime: 900,
+      flippingTime: 1050,
       usePortrait: true,
       autoSize: true
     });

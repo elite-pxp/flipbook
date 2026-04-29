@@ -428,7 +428,8 @@ body {
   body {
     height: auto;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
 
   .app-body {
@@ -443,6 +444,7 @@ body {
   }
 
   .viewer-main {
+    display: block;
     padding-top: 44px;
     padding-bottom: 6px;
   }
