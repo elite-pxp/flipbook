@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flipbook Admin</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="admin-body">
+  <main class="admin-main">
+    <header class="admin-header">
+      <h1>Flipbook Admin</h1>
+      <div class="header-actions">
+        <a href="./index.html" target="_blank" rel="noopener" class="btn">Preview</a>
+        <button id="logout-btn" type="button" class="btn danger">Logout</button>
+      </div>
+    </header>
+
+    <section id="auth-section" class="auth-section">
+      <h2>Admin Login</h2>
+      <form id="login-form" class="auth-form">
+        <label for="email">Email</label>
+        <input id="email" type="email" required autocomplete="username" />
+        <label for="password">Password</label>
+        <input id="password" type="password" required autocomplete="current-password" />
+        <button type="submit" class="btn">Sign In</button>
+      </form>
+      <p id="auth-message" class="message"></p>
+    </section>
+
+    <section id="admin-section" class="admin-section hidden">
+      <div class="upload-panel">
+        <h2>Upload Pages</h2>
+        <label id="dropzone" class="dropzone" for="file-input">
+          <span>Drag and drop images here or click to upload</span>
+          <input id="file-input" type="file" accept="image/*" multiple hidden />
+        </label>
+        <p class="hint">Maximum pages: 200. Images are compressed before upload.</p>
+      </div>
+
+      <h2>Pages</h2>
+      <div id="admin-grid" class="admin-grid"></div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

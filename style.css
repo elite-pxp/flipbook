@@ -1,0 +1,427 @@
+:root {
+  --bg: #f3f4f6;
+  --surface: #ffffff;
+  --line: #d1d5db;
+  --text: #111827;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --danger: #dc2626;
+  --shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+@font-face {
+  font-family: "Playpen Sans";
+  src: url("./fonts/PlaypenSans-wght.ttf") format("truetype");
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Playpen Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.app-body {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+.app-body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("https://res.cloudinary.com/dozcy2jve/image/upload/v1777494466/images/xxx_Panda_Buck_Playbook.pdf_uksa6j.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.14;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.brand-logo {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  width: 96px;
+  height: auto;
+  object-fit: contain;
+  z-index: 20;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.16));
+  pointer-events: none;
+}
+
+.brand-title {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: clamp(11px, 1.15vw, 14px);
+  font-weight: 600;
+  line-height: 1;
+  color: rgba(31, 41, 55, 0.85);
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.5);
+  z-index: 20;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  clip: rect(0, 0, 0, 0);
+  overflow: hidden;
+}
+
+.btn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+}
+
+.btn.danger {
+  border-color: #fecaca;
+  color: var(--danger);
+}
+
+.viewer-main,
+.admin-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.viewer-main {
+  padding-top: 88px;
+}
+
+.viewer-toolbar,
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.viewer-toolbar {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.page-status {
+  width: 100%;
+  text-align: center;
+}
+
+.page-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+#goto-page {
+  width: 72px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.book-shell {
+  position: relative;
+  min-height: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 64px;
+}
+
+.book-shell::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: min(78%, 760px);
+  transform: translate(-50%, -50%);
+  background:
+    radial-gradient(
+      ellipse 60% 100% at center,
+      rgba(0, 0, 0, 0.12) 0%,
+      rgba(0, 0, 0, 0.07) 22%,
+      rgba(0, 0, 0, 0.02) 48%,
+      rgba(0, 0, 0, 0) 74%
+    );
+  mix-blend-mode: multiply;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 4;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.book-shell.is-flipping::after {
+  opacity: 0.26;
+  transform: translate(-50%, -50%) scaleX(1.06);
+}
+
+#flipbook {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 0;
+  overflow: visible;
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.16);
+  transform: translateX(var(--cover-shift, 0));
+  transition: transform 1100ms cubic-bezier(0.19, 1, 0.22, 1);
+  perspective: 2200px;
+  will-change: transform;
+}
+
+.edge-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(15, 23, 42, 0.28);
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.88);
+  color: #ffffff;
+  font-size: 30px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 15;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+
+.edge-nav:hover {
+  border-color: rgba(255, 255, 255, 0.62);
+  background: rgba(17, 24, 39, 0.96);
+  transform: translateY(-50%) scale(1.06);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.34);
+}
+
+.edge-nav:active {
+  transform: translateY(-50%) scale(0.94);
+  background: #0f172a;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.28);
+}
+
+.edge-nav-left {
+  left: 12px;
+}
+
+.edge-nav-right {
+  right: 12px;
+}
+
+
+.page {
+  background: #fff;
+  overflow: visible;
+  border-radius: 0;
+  box-shadow:
+    inset -10px 0 14px -12px rgba(0, 0, 0, 0.2),
+    inset 10px 0 14px -12px rgba(0, 0, 0, 0.18);
+}
+
+.page img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+  border-radius: 0;
+}
+
+#flipbook .stf__parent,
+#flipbook .stf__wrapper,
+#flipbook .stf__block,
+#flipbook .stf__item {
+  overflow: visible !important;
+}
+
+#flipbook .stf__item.-left .page {
+  box-shadow:
+    inset -18px 0 24px -16px rgba(0, 0, 0, 0.3),
+    inset 5px 0 10px -10px rgba(0, 0, 0, 0.08);
+}
+
+#flipbook .stf__item.-right .page {
+  box-shadow:
+    inset 18px 0 24px -16px rgba(0, 0, 0, 0.3),
+    inset -5px 0 10px -10px rgba(0, 0, 0, 0.08);
+}
+
+.auth-section,
+.upload-panel,
+.admin-grid .card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.auth-section,
+.upload-panel {
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.auth-form {
+  display: grid;
+  gap: 10px;
+}
+
+.auth-form input {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.message {
+  color: var(--danger);
+  min-height: 20px;
+}
+
+.dropzone {
+  display: grid;
+  place-items: center;
+  min-height: 120px;
+  border: 2px dashed var(--line);
+  border-radius: 10px;
+  background: #f9fafb;
+  text-align: center;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.dropzone.dragover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: #eff6ff;
+}
+
+.hint {
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  padding: 10px;
+}
+
+.drag-handle {
+  font-size: 12px;
+  color: var(--muted);
+  cursor: grab;
+  user-select: none;
+  margin-bottom: 8px;
+}
+
+.card img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+.card-footer {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.page-num {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+@media (max-width: 768px) {
+  .viewer-main,
+  .admin-main {
+    padding: 14px;
+  }
+
+  .viewer-main {
+    padding-top: 72px;
+  }
+
+  .viewer-toolbar,
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .book-shell {
+    min-height: 420px;
+    padding: 0 52px;
+  }
+
+  .edge-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 26px;
+  }
+
+  .edge-nav-left {
+    left: 6px;
+  }
+
+  .edge-nav-right {
+    right: 6px;
+  }
+
+  .brand-logo {
+    top: 10px;
+    left: 10px;
+    width: 70px;
+  }
+
+  .brand-title {
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    max-width: 90vw;
+    text-align: center;
+  }
+}

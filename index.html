@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flipbook</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+</head>
+<body class="app-body">
+  <img
+    class="brand-logo"
+    src="https://res.cloudinary.com/dozcy2jve/image/upload/v1777494677/images/xxx_Panda_Buck_Playbook.pdf_1_i803ac.png"
+    alt="Panda Buck Playbook"
+  />
+  <h1 class="brand-title">Elite Children Learning Center Flipbook</h1>
+  <main class="viewer-main">
+    <section class="viewer-toolbar">
+      <div class="page-status">
+        <span id="page-indicator">Page 0 / 0</span>
+      </div>
+      <div class="page-controls">
+        <button id="home-page" type="button" class="btn">Home</button>
+        <button id="prev-page" type="button" class="btn">Prev</button>
+        <label for="goto-page" class="sr-only">Go to page</label>
+        <input id="goto-page" type="number" min="1" step="1" placeholder="Go to" />
+        <button id="goto-btn" type="button" class="btn">Go</button>
+        <button id="next-page" type="button" class="btn">Next</button>
+        <button id="download-pdf" type="button" class="btn">Download PDF</button>
+      </div>
+    </section>
+
+    <section class="book-shell">
+      <button id="edge-prev" type="button" class="edge-nav edge-nav-left" aria-label="Previous page">‹</button>
+      <div id="flipbook"></div>
+      <button id="edge-next" type="button" class="edge-nav edge-nav-right" aria-label="Next page">›</button>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
