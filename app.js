@@ -340,8 +340,8 @@
     const toolbarHeight = toolbar ? toolbar.getBoundingClientRect().height : 0;
     const footer = document.querySelector(".brand-title");
     const footerHeight = footer ? footer.getBoundingClientRect().height : 0;
-    const availableWidth = Math.max(640, window.innerWidth - 120);
-    const availableHeight = Math.max(360, window.innerHeight - toolbarHeight - 90);
+    const availableWidth = Math.max(760, window.innerWidth - 64);
+    const availableHeight = Math.max(420, window.innerHeight - toolbarHeight - 42);
     const desktopPageWidthByWidth = availableWidth / 2;
     const desktopPageWidthByHeight = availableHeight / pageAspect;
     const desktopPageWidth = Math.max(320, Math.floor(Math.min(desktopPageWidthByWidth, desktopPageWidthByHeight)));
@@ -366,7 +366,7 @@
       mobileScrollSupport: true,
       flippingTime: 900,
       usePortrait: true,
-      autoSize: true
+      autoSize: isMobile
     });
 
     pageFlip.loadFromHTML(container.querySelectorAll(".page"));
