@@ -225,7 +225,7 @@ body {
   overflow: visible;
   box-shadow: 0 18px 34px rgba(0, 0, 0, 0.16);
   transform: translateX(var(--cover-shift, 0));
-  transition: transform 1100ms cubic-bezier(0.19, 1, 0.22, 1);
+  transition: transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1);
   perspective: 2200px;
   will-change: transform;
 }
@@ -407,7 +407,7 @@ body {
   }
 
   .viewer-main {
-    padding-top: 4px;
+    padding-top: 60px;
     padding-bottom: 6px;
   }
 
@@ -418,7 +418,7 @@ body {
   }
 
   .viewer-toolbar {
-    position: sticky;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -464,10 +464,7 @@ body {
   }
 
   .brand-title {
-    margin: 2px auto 8px;
-    font-size: 13px;
-    max-width: 90vw;
-    text-align: center;
+    display: none;
   }
 
   .page-status {

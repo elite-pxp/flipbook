@@ -348,7 +348,7 @@
     const desktopPageHeight = Math.floor(desktopPageWidth * pageAspect);
     const mobilePageWidth = Math.max(220, Math.floor(window.innerWidth - 16));
     const mobilePageHeightByAspect = Math.floor(mobilePageWidth * pageAspect);
-    const mobileMaxHeight = Math.floor(window.innerHeight - toolbarHeight - footerHeight - 24);
+    const mobileMaxHeight = Math.floor(window.innerHeight - toolbarHeight - 12);
     const mobilePageHeight = Math.max(240, Math.min(mobilePageHeightByAspect, mobileMaxHeight));
     const mobileWidthFromHeight = Math.floor(mobilePageHeight / pageAspect);
     const mobileFinalWidth = Math.min(mobilePageWidth, mobileWidthFromHeight);
@@ -412,7 +412,6 @@
 
     pageFlip.on("flip", (e) => {
       updatePageIndicator(e.data, total);
-      applyCoverShiftByIndex(e.data);
     });
 
     pageFlip.on("changeState", () => {
