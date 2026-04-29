@@ -24,12 +24,17 @@ body {
   font-family: "Playpen Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: var(--text);
   background: var(--bg);
+  height: 100vh;
+  overflow: hidden;
 }
 
 .app-body {
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
   isolation: isolate;
+  overflow: hidden;
 }
 
 .app-body::before {
@@ -74,6 +79,7 @@ body {
 
 .site-footer {
   width: 100%;
+  flex-shrink: 0;
 }
 
 .hidden {
@@ -118,9 +124,12 @@ body {
 }
 
 .viewer-main {
+  flex: 1;
   width: 100%;
-  padding-top: 88px;
-  padding-bottom: 84px;
+  padding-top: 68px;
+  padding-bottom: 8px;
+  display: flex;
+  flex-direction: column;
 }
 
 .viewer-toolbar,
@@ -135,6 +144,13 @@ body {
 .viewer-toolbar {
   flex-direction: column;
   justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  background: rgba(243, 244, 246, 0.92);
+  backdrop-filter: blur(4px);
+  padding: 4px 0 8px;
+  margin-bottom: 8px;
 }
 
 .page-status {
@@ -165,12 +181,14 @@ body {
 
 .book-shell {
   position: relative;
-  min-height: calc(100vh - 180px);
+  flex: 1;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 48px;
-  margin-bottom: 22px;
+  margin-bottom: 8px;
+  overflow: hidden;
 }
 
 .book-shell::after {
@@ -391,8 +409,8 @@ body {
   }
 
   .viewer-main {
-    padding-top: 64px;
-    padding-bottom: 52px;
+    padding-top: 52px;
+    padding-bottom: 6px;
   }
 
   .viewer-toolbar,
@@ -407,9 +425,10 @@ body {
   }
 
   .book-shell {
-    min-height: calc(100vh - 200px);
+    flex: 1;
+    min-height: 0;
     padding: 0 8px;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
   }
 
   .edge-nav {
@@ -431,7 +450,7 @@ body {
   }
 
   .brand-title {
-    margin: 4px auto 14px;
+    margin: 2px auto 8px;
     font-size: 13px;
     max-width: 90vw;
     text-align: center;
