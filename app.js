@@ -244,6 +244,32 @@
     }
   }
 
+  function prepareToolbarForDevice(isMobile, total) {
+    const prev = document.getElementById("prev-page");
+    const next = document.getElementById("next-page");
+    const gotoInput = document.getElementById("goto-page");
+    const gotoBtn = document.getElementById("goto-btn");
+    const downloadBtn = document.getElementById("download-pdf");
+    const shareBtn = document.getElementById("share-page");
+    const gotoSelect = document.getElementById("goto-select");
+    const pageStatus = document.querySelector(".page-status");
+
+    if (isMobile) {
+      [prev, next, gotoInput, gotoBtn, downloadBtn, shareBtn].forEach((el) => {
+        if (el) el.style.display = "none";
+      });
+      if (gotoSelect) {
+        const interiorTotal = Math.max(0, total - 1);
+        gotoSelect.innerHTML = `<option value="">Go to</option>${Array.from({ length: interiorTotal }, (_, i) => `<option value="${i + 1}">Page ${i + 1}</option>`).join("")}`;
+        gotoSelect.style.display = "inline-block";
+      }
+      if (pageStatus) pageStatus.style.display = "none";
+    } else {
+      if (gotoSelect) gotoSelect.style.display = "none";
+      if (pageStatus) pageStatus.style.display = "";
+    }
+  }
+
   async function loadImageElement(src) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -357,13 +383,14 @@
 
     const dimensions = await getFlipDimensions(pagesCache);
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    prepareToolbarForDevice(isMobile, pagesCache.length);
     const pageAspect = dimensions.height / dimensions.width;
     const toolbar = document.querySelector(".viewer-toolbar");
     const toolbarHeight = toolbar ? toolbar.getBoundingClientRect().height : 0;
     const footer = document.querySelector(".brand-title");
     const footerHeight = footer ? footer.getBoundingClientRect().height : 0;
-    const availableWidth = Math.max(640, Math.min(1360, window.innerWidth - 240));
-    const availableHeight = Math.max(380, Math.min(900, window.innerHeight - toolbarHeight - 120));
+    const availableWidth = Math.max(520, Math.min(1100, window.innerWidth - 360));
+    const availableHeight = Math.max(320, Math.min(780, window.innerHeight - toolbarHeight - 140));
     const desktopPageWidthByWidth = availableWidth / 2;
     const desktopPageWidthByHeight = availableHeight / pageAspect;
     const desktopPageWidth = Math.max(320, Math.floor(Math.min(desktopPageWidthByWidth, desktopPageWidthByHeight)));
