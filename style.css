@@ -270,7 +270,7 @@ body {
 
 .page {
   background: #fff;
-  overflow: visible;
+  overflow: hidden;
   border-radius: 0;
   box-shadow:
     inset -10px 0 14px -12px rgba(0, 0, 0, 0.2),
@@ -290,7 +290,7 @@ body {
 #flipbook .stf__wrapper,
 #flipbook .stf__block,
 #flipbook .stf__item {
-  overflow: visible !important;
+  overflow: hidden !important;
 }
 
 #flipbook .stf__item.-left .page {
