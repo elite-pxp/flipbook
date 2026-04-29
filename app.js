@@ -152,14 +152,13 @@
     const edgeNext = document.getElementById("edge-next");
     const gotoInput = document.getElementById("goto-page");
     const gotoSelect = document.getElementById("goto-select");
-    const gotoBtn = document.getElementById("goto-btn");
     const mobileActions = document.getElementById("mobile-actions");
     const downloadBtn = document.getElementById("download-pdf");
     const shareBtn = document.getElementById("share-page");
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
     if (isMobile) {
-      [prev, next, gotoInput, gotoBtn, downloadBtn, shareBtn].forEach((el) => {
+      [prev, next, gotoInput, downloadBtn, shareBtn].forEach((el) => {
         if (el) el.style.display = "none";
       });
       if (gotoSelect) gotoSelect.style.display = "inline-block";
@@ -198,11 +197,11 @@
       };
     }
 
-    if (gotoBtn) gotoBtn.onclick = go;
     if (gotoInput) {
       gotoInput.onkeydown = (e) => {
         if (e.key === "Enter") go();
       };
+      gotoInput.addEventListener("change", go);
     }
 
     if (downloadBtn && !isMobile) {
