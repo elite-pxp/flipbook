@@ -330,9 +330,14 @@
     const dimensions = await getFlipDimensions(pagesCache);
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
     const pageAspect = dimensions.height / dimensions.width;
-    const desktopTargetBookWidth = Math.min(window.innerWidth * 0.9, 1900);
-    const desktopPageWidth = Math.round(desktopTargetBookWidth / 2);
-    const desktopPageHeight = Math.round(desktopPageWidth * pageAspect);
+    const toolbar = document.querySelector(".viewer-toolbar");
+    const toolbarHeight = toolbar ? toolbar.getBoundingClientRect().height : 0;
+    const availableWidth = Math.max(640, window.innerWidth - 120);
+    const availableHeight = Math.max(360, window.innerHeight - toolbarHeight - 90);
+    const desktopPageWidthByWidth = availableWidth / 2;
+    const desktopPageWidthByHeight = availableHeight / pageAspect;
+    const desktopPageWidth = Math.max(320, Math.floor(Math.min(desktopPageWidthByWidth, desktopPageWidthByHeight)));
+    const desktopPageHeight = Math.floor(desktopPageWidth * pageAspect);
 
     pageFlip = new St.PageFlip(container, {
       width: isMobile ? dimensions.width : desktopPageWidth,
