@@ -152,6 +152,7 @@
     const gotoInput = document.getElementById("goto-page");
     const gotoSelect = document.getElementById("goto-select");
     const gotoBtn = document.getElementById("goto-btn");
+    const mobileActions = document.getElementById("mobile-actions");
     const downloadBtn = document.getElementById("download-pdf");
     const shareBtn = document.getElementById("share-page");
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
@@ -242,6 +243,38 @@
         }
       };
     }
+
+    if (mobileActions && isMobile) {
+      mobileActions.onchange = async () => {
+        if (!pageFlip) return;
+        const action = mobileActions.value;
+        mobileActions.value = "";
+        if (!action) return;
+        if (action === "prev") pageFlip.flipPrev();
+        if (action === "next") pageFlip.flipNext();
+        if (action === "go") {
+          const page = Number(gotoSelect?.value || 0);
+          const interiorTotal = Math.max(0, total - 1);
+          if (Number.isFinite(page) && page >= 1 && page <= interiorTotal) {
+            pageFlip.flip(page + 1);
+          }
+        }
+        if (action === "download") {
+          try {
+            await downloadPdf(pagesCache);
+          } catch (err) {
+            alert(`PDF export failed: ${err.message}`);
+          }
+        }
+        if (action === "copy") {
+          try {
+            await navigator.clipboard.writeText(SHARE_URL);
+          } catch (_) {
+            prompt("Copy this link:", SHARE_URL);
+          }
+        }
+      };
+    }
   }
 
   function prepareToolbarForDevice(isMobile, total) {
@@ -252,6 +285,7 @@
     const downloadBtn = document.getElementById("download-pdf");
     const shareBtn = document.getElementById("share-page");
     const gotoSelect = document.getElementById("goto-select");
+    const mobileActions = document.getElementById("mobile-actions");
     const pageStatus = document.querySelector(".page-status");
 
     if (isMobile) {
@@ -263,9 +297,11 @@
         gotoSelect.innerHTML = `<option value="">Go to</option>${Array.from({ length: interiorTotal }, (_, i) => `<option value="${i + 1}">Page ${i + 1}</option>`).join("")}`;
         gotoSelect.style.display = "inline-block";
       }
+      if (mobileActions) mobileActions.style.display = "inline-block";
       if (pageStatus) pageStatus.style.display = "none";
     } else {
       if (gotoSelect) gotoSelect.style.display = "none";
+      if (mobileActions) mobileActions.style.display = "none";
       if (pageStatus) pageStatus.style.display = "";
     }
   }

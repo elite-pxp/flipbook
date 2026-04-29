@@ -157,7 +157,15 @@ body {
 }
 
 .goto-select {
-  display: none;
+  display: none !important;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.mobile-actions {
+  display: none !important;
   padding: 8px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -465,8 +473,13 @@ body {
   }
 
   .goto-select {
-    display: inline-block;
+    display: inline-block !important;
     min-width: 96px;
+  }
+
+  .mobile-actions {
+    display: inline-block !important;
+    min-width: 94px;
   }
 
   #flipbook .page,
