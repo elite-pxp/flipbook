@@ -144,6 +144,7 @@
     const gotoInput = document.getElementById("goto-page");
     const gotoBtn = document.getElementById("goto-btn");
     const downloadBtn = document.getElementById("download-pdf");
+    const shareBtn = document.getElementById("share-page");
 
     if (home) {
       home.onclick = () => {
@@ -184,6 +185,32 @@
         } finally {
           downloadBtn.disabled = false;
           downloadBtn.textContent = prevLabel || "Download PDF";
+        }
+      };
+    }
+
+    if (shareBtn) {
+      shareBtn.onclick = async () => {
+        const url = window.location.href;
+        const originalLabel = shareBtn.textContent || "Share";
+        try {
+          if (navigator.share) {
+            await navigator.share({
+              title: document.title,
+              text: "Check out this flipbook page",
+              url
+            });
+          } else if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(url);
+            shareBtn.textContent = "Link copied";
+            setTimeout(() => {
+              shareBtn.textContent = originalLabel;
+            }, 1400);
+          } else {
+            prompt("Copy this link:", url);
+          }
+        } catch (_) {
+          // User cancel or unsupported state; keep silent.
         }
       };
     }
@@ -360,9 +387,16 @@
       applyCoverShiftByIndex(pageFlip.getCurrentPageIndex());
     }
 
+    function updateSpineState(index) {
+      if (!shell || !pageFlip) return;
+      const current = typeof index === "number" ? index : pageFlip.getCurrentPageIndex();
+      shell.classList.toggle("has-flipped", current > 0);
+    }
+
     pageFlip.on("flip", (e) => {
       updatePageIndicator(e.data + 1, total);
       applyCoverShiftByIndex(e.data);
+      updateSpineState(e.data);
       if (flipAudio) {
         flipAudio.currentTime = 0;
         flipAudio.play().catch(() => {});
@@ -379,6 +413,7 @@
 
     pageFlip.on("changeOrientation", () => {
       updateCoverCentering();
+      updateSpineState();
     });
 
     window.addEventListener("keydown", (e) => {
@@ -388,6 +423,7 @@
     });
 
     setTimeout(updateCoverCentering, 0);
+    setTimeout(updateSpineState, 0);
   }
 
   async function compressImage(file) {

@@ -177,10 +177,14 @@ body {
       rgba(0, 0, 0, 0) 74%
     );
   mix-blend-mode: multiply;
-  opacity: 0.18;
+  opacity: 0;
   pointer-events: none;
   z-index: 4;
   transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.book-shell.has-flipped::after {
+  opacity: 0.18;
 }
 
 .book-shell.is-flipping::after {
