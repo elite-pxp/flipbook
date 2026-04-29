@@ -71,7 +71,7 @@
     },
     {
       id: "seed-page-10",
-      image_url: "https://res.cloudinary.com/dozcy2jve/image/upload/v1777495110/images/10_i71svh.png",
+      image_url: "https://res.cloudinary.com/dozcy2jve/image/upload/v1777501809/images/xxx_Panda_Buck_Playbook.pdf_2_fzaq1q.png",
       page_number: 11,
       created_at: new Date().toISOString()
     },
