@@ -375,12 +375,12 @@ body {
 @media (max-width: 768px) {
   .viewer-main,
   .admin-main {
-    padding: 14px;
+    padding: 8px;
   }
 
   .viewer-main {
-    padding-top: 72px;
-    padding-bottom: 72px;
+    padding-top: 64px;
+    padding-bottom: 52px;
   }
 
   .viewer-toolbar,
@@ -395,15 +395,13 @@ body {
   }
 
   .book-shell {
-    min-height: 420px;
-    padding: 0 52px;
-    margin-bottom: 16px;
+    min-height: calc(100vh - 200px);
+    padding: 0 8px;
+    margin-bottom: 10px;
   }
 
   .edge-nav {
-    width: 40px;
-    height: 40px;
-    font-size: 26px;
+    display: none;
   }
 
   .edge-nav-left {
@@ -425,5 +423,16 @@ body {
     font-size: 13px;
     max-width: 90vw;
     text-align: center;
+  }
+
+  #prev-page,
+  #next-page {
+    display: none;
+  }
+
+  #flipbook .page,
+  #flipbook .page * {
+    font-size: 0 !important;
+    line-height: 0 !important;
   }
 }

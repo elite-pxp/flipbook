@@ -281,7 +281,7 @@
         const loading = idx < 4 ? "eager" : "lazy";
         return `
           <div class="page" data-density="hard">
-            <img src="${escapeHtml(item.image_url)}" alt="Page ${item.page_number}" loading="${loading}" decoding="async" />
+            <img src="${escapeHtml(item.image_url)}" alt="" loading="${loading}" decoding="async" />
           </div>
         `;
       })
@@ -338,21 +338,29 @@
     const pageAspect = dimensions.height / dimensions.width;
     const toolbar = document.querySelector(".viewer-toolbar");
     const toolbarHeight = toolbar ? toolbar.getBoundingClientRect().height : 0;
+    const footer = document.querySelector(".brand-title");
+    const footerHeight = footer ? footer.getBoundingClientRect().height : 0;
     const availableWidth = Math.max(640, window.innerWidth - 120);
     const availableHeight = Math.max(360, window.innerHeight - toolbarHeight - 90);
     const desktopPageWidthByWidth = availableWidth / 2;
     const desktopPageWidthByHeight = availableHeight / pageAspect;
     const desktopPageWidth = Math.max(320, Math.floor(Math.min(desktopPageWidthByWidth, desktopPageWidthByHeight)));
     const desktopPageHeight = Math.floor(desktopPageWidth * pageAspect);
+    const mobilePageWidth = Math.max(220, Math.floor(window.innerWidth - 16));
+    const mobilePageHeightByAspect = Math.floor(mobilePageWidth * pageAspect);
+    const mobileMaxHeight = Math.floor(window.innerHeight - toolbarHeight - footerHeight - 24);
+    const mobilePageHeight = Math.max(240, Math.min(mobilePageHeightByAspect, mobileMaxHeight));
+    const mobileWidthFromHeight = Math.floor(mobilePageHeight / pageAspect);
+    const mobileFinalWidth = Math.min(mobilePageWidth, mobileWidthFromHeight);
 
     pageFlip = new St.PageFlip(container, {
-      width: isMobile ? dimensions.width : desktopPageWidth,
-      height: isMobile ? dimensions.height : desktopPageHeight,
+      width: isMobile ? mobileFinalWidth : desktopPageWidth,
+      height: isMobile ? mobilePageHeight : desktopPageHeight,
       size: isMobile ? "stretch" : "fixed",
       minWidth: isMobile ? 180 : 280,
-      maxWidth: isMobile ? 560 : desktopPageWidth,
+      maxWidth: isMobile ? mobileFinalWidth : desktopPageWidth,
       minHeight: isMobile ? 260 : 320,
-      maxHeight: isMobile ? 760 : desktopPageHeight,
+      maxHeight: isMobile ? mobilePageHeight : desktopPageHeight,
       maxShadowOpacity: 0.6,
       showCover: true,
       mobileScrollSupport: true,
