@@ -434,8 +434,8 @@
     const toolbarHeight = toolbar ? toolbar.getBoundingClientRect().height : 0;
     const footer = document.querySelector(".brand-title");
     const footerHeight = footer ? footer.getBoundingClientRect().height : 0;
-    const availableWidth = Math.max(520, Math.min(980, window.innerWidth - 420));
-    const availableHeight = Math.max(320, Math.min(760, window.innerHeight - toolbarHeight - 150));
+    const availableWidth = Math.max(620, Math.min(1320, window.innerWidth - 240));
+    const availableHeight = Math.max(420, Math.min(980, window.innerHeight - toolbarHeight - 80));
     const desktopPageWidthByWidth = availableWidth / 2;
     const desktopPageWidthByHeight = availableHeight / pageAspect;
     const desktopPageWidth = Math.max(320, Math.floor(Math.min(desktopPageWidthByWidth, desktopPageWidthByHeight)));
