@@ -403,7 +403,7 @@ body {
   }
 
   .viewer-main {
-    padding-top: 60px;
+    padding-top: 52px;
     padding-bottom: 6px;
   }
 
@@ -438,7 +438,7 @@ body {
     flex: 1;
     min-height: 0;
     padding: 0 8px;
-    margin-top: 0;
+    margin-top: -4px;
     margin-bottom: 4px;
   }
 
