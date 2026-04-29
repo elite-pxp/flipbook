@@ -487,6 +487,26 @@
     updatePageIndicator(0, total);
     bindViewerButtons(total);
 
+    function updateEdgeCenteringByIndex(index) {
+      if (!pageFlip) return;
+      const isDesktop = window.matchMedia("(min-width: 769px)").matches;
+      const isLandscape = pageFlip.getOrientation() === "landscape";
+      const lastIndex = Math.max(0, pageFlip.getPageCount() - 1);
+      const isCover = index === 0;
+      const isBack = index === lastIndex;
+      const shouldCenter = isDesktop && isLandscape && (isCover || isBack);
+
+      if (!shouldCenter) {
+        container.style.setProperty("--cover-shift", "0px");
+        return;
+      }
+
+      const rect = pageFlip.getBoundsRect();
+      const shift = Math.round(rect.pageWidth / 2);
+      const signedShift = isCover ? -shift : shift;
+      container.style.setProperty("--cover-shift", `${signedShift}px`);
+    }
+
     pageFlip.on("flip", (e) => {
       updatePageIndicator(e.data, total);
     });
@@ -505,6 +525,13 @@
           audio.play().catch(() => {});
         }
       }
+      if (state === "read") {
+        updateEdgeCenteringByIndex(pageFlip.getCurrentPageIndex());
+      }
+    });
+
+    pageFlip.on("changeOrientation", () => {
+      updateEdgeCenteringByIndex(pageFlip.getCurrentPageIndex());
     });
 
     window.addEventListener("keydown", (e) => {
@@ -513,7 +540,9 @@
       if (e.key === "ArrowRight") pageFlip.flipNext();
     });
 
-    container.style.setProperty("--cover-shift", "0px");
+    setTimeout(() => {
+      updateEdgeCenteringByIndex(pageFlip ? pageFlip.getCurrentPageIndex() : 0);
+    }, 0);
   }
 
   async function compressImage(file) {
