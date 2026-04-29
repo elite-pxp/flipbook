@@ -490,11 +490,10 @@
     function updateEdgeCenteringByIndex(index) {
       if (!pageFlip) return;
       const isDesktop = window.matchMedia("(min-width: 769px)").matches;
-      const isLandscape = pageFlip.getOrientation() === "landscape";
       const lastIndex = Math.max(0, pageFlip.getPageCount() - 1);
       const isCover = index === 0;
       const isBack = index === lastIndex;
-      const shouldCenter = isDesktop && isLandscape && (isCover || isBack);
+      const shouldCenter = isDesktop && (isCover || isBack);
 
       if (!shouldCenter) {
         container.style.setProperty("--cover-shift", "0px");
@@ -509,6 +508,7 @@
 
     pageFlip.on("flip", (e) => {
       updatePageIndicator(e.data, total);
+      updateEdgeCenteringByIndex(e.data);
     });
 
     pageFlip.on("changeState", () => {
