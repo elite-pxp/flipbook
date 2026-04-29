@@ -301,12 +301,12 @@ body {
   }
 
   .viewer-toolbar {
-    z-index: 6;
+    z-index: 2;
   }
 
   .book-shell {
-    padding-top: 32px;
-    margin-top: 16px;
+    padding-top: 52px;
+    margin-top: 24px;
   }
 
   .page {
@@ -318,6 +318,10 @@ body {
   #flipbook .stf__block,
   #flipbook .stf__item {
     overflow: visible !important;
+  }
+
+  #flipbook {
+    z-index: 30;
   }
 }
 
