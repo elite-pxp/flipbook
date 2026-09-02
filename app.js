@@ -82,6 +82,44 @@
       created_at: new Date().toISOString()
     }
   ];
+  const HOMEWORK_BOOKLET_PREVIEW_PAGES = [
+    ["1JSR0P_xPKFDlqru7hEeCEnbcVWxfr3m8", 1], ["1ILND0M5cv43mQ-Wklk9SUbf6rkaMOrvg", 2],
+    ["1XBtmAJ46gA5PXnAdVCHDoEL5PpMVu0jV", 3], ["1IzOiGMiRW1CLHR_OXWGcbjeYGvYd-Xdi", 4],
+    ["1dwz5zinIYHmYS5kigF76IzyI7DFez0O5", 5], ["1SpHNcWxeYgqJ4jC2ywzoyB1tMxXqpRr2", 6],
+    ["1YoL09rgn-ySnhx0JcXbdsC4RBZq4iBCV", 7], ["1mBd5YnchzG6AFlFfmirG4l1e3J5tOTae", 8],
+    ["1VTjGArXzKBR90JKP20iy4gjqEhCyWrly", 9], ["1YLz3ivqFbJyQsyFD7y4dchlSRGtkpbP_", 10],
+    ["12s6BjSVWRzmOoVO8x2jy39koddZ5LpNa", 11], ["1bau3rkbICDglmfn2nQZwZ6HwzacumHtO", 12],
+    ["1J-Gv19iC7Fc2I3ezS9Q-DciEzgrZnmKW", 13], ["1eKKQwWELSt_tlNt6sRweyw4Gs2l93CpF", 14],
+    ["1iLV9-uDVzJyGIBVDIa4drEuH1_nr_JTH", 15], ["1pkJVInRO5E3u-srB6LOoa9HuBuA4sm4d", 16],
+    ["11guYUDEYA43FawplehEskZk-D7exWRi7", 17], ["1fy0-ZhRSx6OBWGqJp5PePoZmP9KXwp62", 18],
+    ["16L4DpOG-If6jLHdkZYMUY6URs_UMhGXA", 19], ["1RsxPPF-AjvypCmeiG3yxCPmqPC13T1Yx", 20],
+    ["1wB4fyQtX12e1BZsemqVLvOPTUg6nEfVe", 21], ["1sKQZClnoYw2Im0XAln86yCa6jvuw5-ln", 22],
+    ["1t9izYBC0ZPB6oKAIQTAzS6m4Vpf4z5m3", 23], ["18xyreBbcAX2b8diH8sJGSLQCTfClDJ4i", 24],
+    ["1G-70vzAmK9eoSfPyDoJ4i-udwZtbBZPS", 25]
+  ].map(([id, page_number]) => ({
+    id: `homework-preview-${page_number}`,
+    image_url: `https://drive.google.com/thumbnail?id=${id}&sz=w1600`,
+    page_number,
+    created_at: new Date().toISOString()
+  }));
+  const BOOK_LIBRARY = [
+    {
+      id: "panda-buck-playbook",
+      title: "Panda Buck Playbook",
+      description: "ECLC Flip Book 2026",
+      cover_url: PREVIEW_SEED_PAGES[0].image_url,
+      pages: PREVIEW_SEED_PAGES
+    },
+    {
+      id: "homework-booklet-starter-guide",
+      title: "Homework Booklet Starter Guide",
+      description: "Preview edition",
+      cover_url: HOMEWORK_BOOKLET_PREVIEW_PAGES[0].image_url,
+      pages: HOMEWORK_BOOKLET_PREVIEW_PAGES,
+      isPreview: true,
+      orderUrl: ""
+    }
+  ];
   const FLIP_SOUND_URL = "https://res.cloudinary.com/dozcy2jve/video/upload/v1777488525/images/188485__rofd__flip-page_rz2es2.wav";
 
   const hasSupabaseConfig =
@@ -101,6 +139,8 @@
   let flipAudioIndex = 0;
   let lastFlipSoundAt = 0;
   let mobileZoom = 1;
+  const requestedBookId = new URLSearchParams(location.search).get("book");
+  const activeBook = BOOK_LIBRARY.find((book) => book.id === requestedBookId) || null;
 
   function escapeHtml(value) {
     return String(value)
@@ -113,7 +153,7 @@
 
   async function fetchPages() {
     if (!client) {
-      return IS_ADMIN ? [] : PREVIEW_SEED_PAGES;
+      return IS_ADMIN ? [] : (activeBook?.pages || []);
     }
 
     const { data, error } = await client
@@ -136,6 +176,10 @@
   function updatePageIndicator(currentIndex, total) {
     const indicator = document.getElementById("page-indicator");
     if (!indicator) return;
+    if (activeBook?.isPreview && currentIndex === total - 1) {
+      indicator.textContent = "Order your book";
+      return;
+    }
     const interiorTotal = Math.max(0, total - 1);
     if (currentIndex <= 0) {
       indicator.textContent = interiorTotal > 0 ? `Cover / ${interiorTotal}` : "Cover / 0";
@@ -168,8 +212,7 @@
 
     if (home) {
       home.onclick = () => {
-        if (!pageFlip) return;
-        pageFlip.flip(0);
+        window.location.href = "./";
       };
     }
 
@@ -367,9 +410,9 @@
     doc.save("flipbook.pdf");
   }
 
-  function buildPageHtml(pages) {
+  function buildPageHtml(pages, book = null) {
     const lastIndex = pages.length - 1;
-    return pages
+    const imagePages = pages
       .map((item, idx) => {
         const loading = idx < 4 ? "eager" : "lazy";
         const density = idx === 0 || idx === lastIndex ? "hard" : "soft";
@@ -380,6 +423,18 @@
         `;
       })
       .join("");
+    if (!book?.isPreview) return imagePages;
+
+    return `${imagePages}
+      <div class="page order-page" data-density="hard">
+        <div class="order-page-content">
+          <p class="order-page-eyebrow">End of preview</p>
+          <h2>Enjoying the guide?</h2>
+          <p>Order the complete <strong>${escapeHtml(book.title)}</strong> to keep reading.</p>
+          <button id="order-book" class="order-book-btn" type="button">Order your book <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    `;
   }
 
   function loadImageSize(src) {
@@ -417,7 +472,7 @@
       return;
     }
 
-    container.innerHTML = buildPageHtml(pagesCache);
+    container.innerHTML = buildPageHtml(pagesCache, activeBook);
 
     if (!window.St || !window.St.PageFlip) {
       throw new Error("StPageFlip library failed to load.");
@@ -429,6 +484,7 @@
 
     const dimensions = await getFlipDimensions(pagesCache);
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     prepareToolbarForDevice(isMobile, pagesCache.length);
     const pageAspect = dimensions.height / dimensions.width;
     const toolbar = document.querySelector(".viewer-toolbar");
@@ -436,14 +492,14 @@
     const footer = document.querySelector(".brand-title");
     const footerHeight = footer ? footer.getBoundingClientRect().height : 0;
     const availableWidth = Math.max(620, Math.min(1320, window.innerWidth - 240));
-    const availableHeight = Math.max(420, Math.min(980, window.innerHeight - toolbarHeight - 80));
+    const availableHeight = Math.max(420, Math.min(980, window.innerHeight - toolbarHeight - 138));
     const desktopPageWidthByWidth = availableWidth / 2;
     const desktopPageWidthByHeight = availableHeight / pageAspect;
     const desktopPageWidth = Math.max(320, Math.floor(Math.min(desktopPageWidthByWidth, desktopPageWidthByHeight)));
     const desktopPageHeight = Math.floor(desktopPageWidth * pageAspect);
     const mobilePageWidth = Math.max(220, Math.floor(window.innerWidth - 16));
     const mobilePageHeightByAspect = Math.floor(mobilePageWidth * pageAspect);
-    const mobileMaxHeight = Math.floor(window.innerHeight - toolbarHeight - 12);
+    const mobileMaxHeight = Math.floor(window.innerHeight - toolbarHeight - 36);
     const mobilePageHeight = Math.max(240, Math.min(mobilePageHeightByAspect, mobileMaxHeight));
     const mobileWidthFromHeight = Math.floor(mobilePageHeight / pageAspect);
     const mobileFinalWidth = Math.min(mobilePageWidth, mobileWidthFromHeight);
@@ -456,13 +512,14 @@
       maxWidth: isMobile ? mobileFinalWidth : desktopPageWidth,
       minHeight: isMobile ? 280 : 360,
       maxHeight: isMobile ? mobilePageHeight : desktopPageHeight,
-      maxShadowOpacity: 0.6,
-      drawShadow: true,
+      maxShadowOpacity: prefersReducedMotion ? 0 : 0.3,
+      drawShadow: !prefersReducedMotion,
       showCover: true,
       mobileScrollSupport: !isMobile,
-      flippingTime: 1050,
-      usePortrait: true,
-      autoSize: true
+      flippingTime: prefersReducedMotion ? 450 : 720,
+      usePortrait: isMobile,
+      autoSize: true,
+      useMouseEvents: true
     });
 
     pageFlip.loadFromHTML(container.querySelectorAll(".page"));
@@ -477,7 +534,7 @@
       });
     }
 
-    const total = pagesCache.length;
+    const total = pageFlip.getPageCount();
     if (isMobile) {
       container.style.setProperty("--mobile-zoom", String(mobileZoom));
     } else {
@@ -487,21 +544,34 @@
     updatePageIndicator(0, total);
     bindViewerButtons(total);
 
+    const orderButton = document.getElementById("order-book");
+    if (orderButton && activeBook?.isPreview) {
+      orderButton.onclick = () => {
+        if (activeBook.orderUrl) {
+          window.open(activeBook.orderUrl, "_blank", "noopener");
+          return;
+        }
+        alert("The order link for this book will be added shortly.");
+      };
+    }
+
     function updateEdgeCenteringByIndex(index) {
       if (!pageFlip) return;
       const isDesktop = window.matchMedia("(min-width: 769px)").matches;
-      const isLandscape = pageFlip.getOrientation() === "landscape";
       const lastIndex = Math.max(0, pageFlip.getPageCount() - 1);
       const isCover = index === 0;
       const isBack = index === lastIndex;
-      const shouldCenter = isDesktop && isLandscape && (isCover || isBack);
+      // StPageFlip reports a portrait orientation while showing a single hard cover,
+      // even though the empty half of its spread remains in the layout. Center the
+      // visible cover/back page on desktop regardless of that internal orientation.
+      const shouldCenter = isDesktop && (isCover || isBack);
+      const rect = pageFlip.getBoundsRect();
 
       if (!shouldCenter) {
         container.style.setProperty("--cover-shift", "0px");
         return;
       }
 
-      const rect = pageFlip.getBoundsRect();
       const shift = Math.round(rect.pageWidth / 2);
       const signedShift = isCover ? -shift : shift;
       container.style.setProperty("--cover-shift", `${signedShift}px`);
@@ -509,6 +579,7 @@
 
     pageFlip.on("flip", (e) => {
       updatePageIndicator(e.data, total);
+      updateEdgeCenteringByIndex(e.data);
     });
 
     pageFlip.on("changeState", () => {
@@ -543,6 +614,31 @@
     setTimeout(() => {
       updateEdgeCenteringByIndex(pageFlip ? pageFlip.getCurrentPageIndex() : 0);
     }, 0);
+  }
+
+  function renderLibrary() {
+    const libraryMain = document.getElementById("library-main");
+    const viewerMain = document.getElementById("viewer-main");
+    const grid = document.getElementById("book-library-grid");
+    if (!libraryMain || !grid) return;
+
+    document.body.classList.add("library-active");
+    viewerMain?.classList.add("hidden");
+    libraryMain.classList.remove("hidden");
+    grid.innerHTML = BOOK_LIBRARY.map((book) => `
+      <article class="book-card">
+        <a class="book-card-cover" href="?book=${encodeURIComponent(book.id)}" aria-label="Open ${escapeHtml(book.title)}">
+          <img src="${escapeHtml(book.cover_url)}" alt="Cover of ${escapeHtml(book.title)}" loading="eager" />
+          <span class="book-card-open">Open book <span aria-hidden="true">→</span></span>
+        </a>
+        <div class="book-card-details">
+          <p class="book-card-type">Flipbook</p>
+          <h3><a href="?book=${encodeURIComponent(book.id)}">${escapeHtml(book.title)}</a></h3>
+          <p>${escapeHtml(book.description)}</p>
+          <span class="book-card-pages">${book.isPreview ? `${book.pages.length}-page preview` : `${Math.max(0, book.pages.length - 1)} pages · Free`}</span>
+        </div>
+      </article>
+    `).join("");
   }
 
   async function compressImage(file) {
@@ -855,8 +951,13 @@
       alert(`Admin initialization failed: ${e.message}`);
     });
   } else {
-    renderFlipbook().catch((e) => {
-      console.error(e);
-    });
+    if (activeBook) {
+      document.getElementById("viewer-main")?.classList.remove("hidden");
+      renderFlipbook().catch((e) => {
+        console.error(e);
+      });
+    } else {
+      renderLibrary();
+    }
   }
 })();

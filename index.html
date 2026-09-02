@@ -3,20 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-  <title>Flipbook</title>
+  <title>Childcare Cheero Book Library</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./style.css?v=20260902-brand" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 </head>
 <body class="app-body">
-  <main class="viewer-main">
+  <main id="library-main" class="library-main hidden" aria-labelledby="library-title">
+    <header class="library-header">
+      <div class="library-brand">
+        <img
+          class="brand-logo"
+          src="https://assets.cdn.filesafe.space/l1M5JRVy49h4zcBcOXhu/media/6a4536cfdc5f2c22a28891ff.png"
+          alt="Childcare Cheero"
+        />
+        <div>
+          <p class="library-eyebrow">Childcare Cheero</p>
+          <h1 id="library-title">Childcare Cheero Library</h1>
+        </div>
+      </div>
+      <a class="library-admin-link" href="./admin.html">Upload New Books</a>
+    </header>
+
+    <section class="library-intro" aria-labelledby="library-intro-title">
+      <p class="library-eyebrow">Your collection</p>
+      <h2 id="library-intro-title">Open a book and start reading.</h2>
+      <p>New titles will appear here as they are added to your collection.</p>
+    </section>
+
+    <section id="book-library-grid" class="book-library-grid" aria-label="Available books"></section>
+  </main>
+
+  <main id="viewer-main" class="viewer-main hidden">
     <section class="viewer-toolbar">
       <img
         class="brand-logo"
-        src="https://res.cloudinary.com/dozcy2jve/image/upload/v1777494677/images/xxx_Panda_Buck_Playbook.pdf_1_i803ac.png"
-        alt="Panda Buck Playbook"
+        src="https://assets.cdn.filesafe.space/l1M5JRVy49h4zcBcOXhu/media/6a4536cfdc5f2c22a28891ff.png"
+        alt="Childcare Cheero"
       />
       <div class="page-status">
         <span id="page-indicator">Page 0 / 0</span>
@@ -52,8 +77,8 @@
       <button id="edge-next" type="button" class="edge-nav edge-nav-right" aria-label="Next page">›</button>
     </section>
   </main>
-  <p class="brand-watermark">ECLC FLIP BOOK 2026</p>
+  <p class="brand-watermark">CHILDCARE CHEERO LIBRARY</p>
 
-  <script src="./app.js"></script>
+  <script src="./app.js?v=20260902-8"></script>
 </body>
 </html>
