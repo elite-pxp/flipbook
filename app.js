@@ -83,19 +83,12 @@
     }
   ];
   const HOMEWORK_BOOKLET_PREVIEW_PAGES = [
-    ["1JSR0P_xPKFDlqru7hEeCEnbcVWxfr3m8", 1], ["1ILND0M5cv43mQ-Wklk9SUbf6rkaMOrvg", 2],
-    ["1XBtmAJ46gA5PXnAdVCHDoEL5PpMVu0jV", 3], ["1IzOiGMiRW1CLHR_OXWGcbjeYGvYd-Xdi", 4],
-    ["1dwz5zinIYHmYS5kigF76IzyI7DFez0O5", 5], ["1SpHNcWxeYgqJ4jC2ywzoyB1tMxXqpRr2", 6],
-    ["1YoL09rgn-ySnhx0JcXbdsC4RBZq4iBCV", 7], ["1mBd5YnchzG6AFlFfmirG4l1e3J5tOTae", 8],
-    ["1VTjGArXzKBR90JKP20iy4gjqEhCyWrly", 9], ["1YLz3ivqFbJyQsyFD7y4dchlSRGtkpbP_", 10],
-    ["12s6BjSVWRzmOoVO8x2jy39koddZ5LpNa", 11], ["1bau3rkbICDglmfn2nQZwZ6HwzacumHtO", 12],
-    ["1J-Gv19iC7Fc2I3ezS9Q-DciEzgrZnmKW", 13], ["1eKKQwWELSt_tlNt6sRweyw4Gs2l93CpF", 14],
-    ["1iLV9-uDVzJyGIBVDIa4drEuH1_nr_JTH", 15], ["1pkJVInRO5E3u-srB6LOoa9HuBuA4sm4d", 16],
-    ["11guYUDEYA43FawplehEskZk-D7exWRi7", 17], ["1fy0-ZhRSx6OBWGqJp5PePoZmP9KXwp62", 18],
-    ["16L4DpOG-If6jLHdkZYMUY6URs_UMhGXA", 19], ["1RsxPPF-AjvypCmeiG3yxCPmqPC13T1Yx", 20],
-    ["1wB4fyQtX12e1BZsemqVLvOPTUg6nEfVe", 21], ["1sKQZClnoYw2Im0XAln86yCa6jvuw5-ln", 22],
-    ["1t9izYBC0ZPB6oKAIQTAzS6m4Vpf4z5m3", 23], ["18xyreBbcAX2b8diH8sJGSLQCTfClDJ4i", 24],
-    ["1G-70vzAmK9eoSfPyDoJ4i-udwZtbBZPS", 25]
+    ["1JSR0P_xPKFDlqru7hEeCEnbcVWxfr3m8", 1], ["1dwz5zinIYHmYS5kigF76IzyI7DFez0O5", 2],
+    ["1mBd5YnchzG6AFlFfmirG4l1e3J5tOTae", 3], ["1VTjGArXzKBR90JKP20iy4gjqEhCyWrly", 4],
+    ["1YLz3ivqFbJyQsyFD7y4dchlSRGtkpbP_", 5], ["1J-Gv19iC7Fc2I3ezS9Q-DciEzgrZnmKW", 6],
+    ["1eKKQwWELSt_tlNt6sRweyw4Gs2l93CpF", 7], ["11guYUDEYA43FawplehEskZk-D7exWRi7", 8],
+    ["1fy0-ZhRSx6OBWGqJp5PePoZmP9KXwp62", 9], ["1wB4fyQtX12e1BZsemqVLvOPTUg6nEfVe", 10],
+    ["1sKQZClnoYw2Im0XAln86yCa6jvuw5-ln", 11]
   ].map(([id, page_number]) => ({
     id: `homework-preview-${page_number}`,
     image_url: `https://drive.google.com/thumbnail?id=${id}&sz=w1600`,
