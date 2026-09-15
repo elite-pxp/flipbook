@@ -757,7 +757,80 @@ body {
 
   .viewer-main,
   .admin-main {
-    padding: 8px;
+    padding: 16px;
+  }
+
+  .admin-main {
+    max-width: 520px;
+  }
+
+  .admin-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 0 2px;
+  }
+
+  .admin-header h1 {
+    margin: 0;
+    max-width: 220px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 30px;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+
+  .header-actions {
+    display: grid;
+    gap: 6px;
+  }
+
+  .header-actions .btn {
+    min-height: 34px;
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .auth-section,
+  .upload-panel {
+    padding: 18px;
+    margin-bottom: 16px;
+    border-radius: 14px;
+  }
+
+  .auth-section h2,
+  .upload-panel h2,
+  .admin-section > h2 {
+    margin-top: 0;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 25px;
+    line-height: 1;
+  }
+
+  .auth-form {
+    gap: 8px;
+  }
+
+  .auth-form input {
+    min-height: 40px;
+    font-size: 16px;
+  }
+
+  .auth-form .btn {
+    width: 100%;
+    margin-top: 2px;
+  }
+
+  .dropzone {
+    min-height: 104px;
+    padding: 18px;
+  }
+
+  .admin-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .library-main {
