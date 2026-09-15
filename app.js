@@ -95,10 +95,9 @@
     page_number,
     created_at: new Date().toISOString()
   }));
-  const A4_PAGE_ASPECT = 210 / 297;
   const PTA_2026_PREVIEW_PAGES = Array.from({ length: 21 }, (_, index) => ({
     id: `pta-2026-preview-${index + 1}`,
-    image_url: `./assets/pta-2026/page-${String(index + 1).padStart(2, "0")}.webp`,
+    image_url: `./assets/pta-2026/page-${String(index + 1).padStart(2, "0")}.webp?v=2`,
     page_number: index + 1,
     created_at: new Date().toISOString()
   }));
@@ -426,9 +425,8 @@
       .map((item, idx) => {
         const loading = idx < 4 ? "eager" : "lazy";
         const density = idx === 0 || idx === lastIndex ? "hard" : "soft";
-        const a4Class = book?.isA4Portrait ? " page-a4" : "";
         return `
-          <div class="page${a4Class}" data-density="${density}">
+          <div class="page" data-density="${density}">
             <img src="${escapeHtml(item.image_url)}" alt="" loading="${loading}" decoding="async" />
           </div>
         `;
@@ -460,12 +458,6 @@
   async function getFlipDimensions(pages) {
     const fallback = { width: 900, height: 600 };
     if (!pages.length) return fallback;
-
-    // A4 portrait books keep a fixed 210:297 page geometry regardless of the
-    // intrinsic size of the source images (some assets are non-A4 thumbnails).
-    if (activeBook?.isA4Portrait) {
-      return { width: 1000, height: Math.round(1000 / A4_PAGE_ASPECT) };
-    }
 
     try {
       const size = await loadImageSize(pages[0].image_url);
@@ -523,7 +515,7 @@
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     prepareToolbarForDevice(isMobile, pagesCache.length);
-    const pageAspect = activeBook?.isA4Portrait ? 1 / A4_PAGE_ASPECT : dimensions.height / dimensions.width;
+    const pageAspect = dimensions.height / dimensions.width;
     const toolbar = document.querySelector(".viewer-toolbar");
     const toolbarHeight = toolbar ? toolbar.getBoundingClientRect().height : 0;
     const footer = document.querySelector(".brand-title");
