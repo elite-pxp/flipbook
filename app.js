@@ -92,6 +92,9 @@
   ].map(([id, page_number]) => ({
     id: `homework-preview-${page_number}`,
     image_url: `https://drive.google.com/thumbnail?id=${id}&sz=w1600`,
+    small_url: `https://drive.google.com/thumbnail?id=${id}&sz=w800`,
+    srcset: `https://drive.google.com/thumbnail?id=${id}&sz=w800 800w, https://drive.google.com/thumbnail?id=${id}&sz=w1600 1600w`,
+    sizes: "(max-width: 768px) 92vw, 46vw",
     page_number,
     created_at: new Date().toISOString()
   }));
@@ -560,7 +563,7 @@
     const lastIndex = pages.length - 1;
     const imagePages = pages
       .map((item, idx) => {
-        const loading = idx < 4 ? "eager" : "lazy";
+        const loading = idx < 2 ? "eager" : "lazy";
         const density = idx === 0 || idx === lastIndex ? "hard" : "soft";
         const srcsetAttr = item.srcset ? ` srcset="${escapeHtml(item.srcset)}" sizes="${escapeHtml(item.sizes || "100vw")}"` : "";
         return `
@@ -587,8 +590,19 @@
   function loadImageSize(src) {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
-      img.onerror = () => reject(new Error("Failed to read image dimensions."));
+      const timeout = setTimeout(() => {
+        img.onload = null;
+        img.onerror = null;
+        reject(new Error("Image dimensions timed out."));
+      }, 8000);
+      img.onload = () => {
+        clearTimeout(timeout);
+        resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+      img.onerror = () => {
+        clearTimeout(timeout);
+        reject(new Error("Failed to read image dimensions."));
+      };
       img.src = src;
     });
   }
