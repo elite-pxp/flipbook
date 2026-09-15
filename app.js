@@ -95,6 +95,7 @@
     page_number,
     created_at: new Date().toISOString()
   }));
+  const A4_PAGE_ASPECT = 210 / 297;
   const PTA_2026_PREVIEW_PAGES = Array.from({ length: 21 }, (_, index) => ({
     id: `pta-2026-preview-${index + 1}`,
     image_url: `./assets/pta-2026/page-${String(index + 1).padStart(2, "0")}.webp`,
@@ -123,7 +124,8 @@
       title: "2026 PTA",
       description: "The Elite Way",
       cover_url: PTA_2026_PREVIEW_PAGES[0].image_url,
-      pages: PTA_2026_PREVIEW_PAGES
+      pages: PTA_2026_PREVIEW_PAGES,
+      isA4Portrait: true
     }
   ];
   const FLIP_SOUND_URL = "https://res.cloudinary.com/dozcy2jve/video/upload/v1777488525/images/188485__rofd__flip-page_rz2es2.wav";
@@ -145,6 +147,8 @@
   let flipAudioIndex = 0;
   let lastFlipSoundAt = 0;
   let mobileZoom = 1;
+  let renderInFlight = false;
+  let resizePending = false;
   const requestedBookId = new URLSearchParams(location.search).get("book");
   const activeBook = BOOK_LIBRARY.find((book) => book.id === requestedBookId) || null;
 
@@ -422,8 +426,9 @@
       .map((item, idx) => {
         const loading = idx < 4 ? "eager" : "lazy";
         const density = idx === 0 || idx === lastIndex ? "hard" : "soft";
+        const a4Class = book?.isA4Portrait ? " page-a4" : "";
         return `
-          <div class="page" data-density="${density}">
+          <div class="page${a4Class}" data-density="${density}">
             <img src="${escapeHtml(item.image_url)}" alt="" loading="${loading}" decoding="async" />
           </div>
         `;
@@ -456,6 +461,12 @@
     const fallback = { width: 900, height: 600 };
     if (!pages.length) return fallback;
 
+    // A4 portrait books keep a fixed 210:297 page geometry regardless of the
+    // intrinsic size of the source images (some assets are non-A4 thumbnails).
+    if (activeBook?.isA4Portrait) {
+      return { width: 1000, height: Math.round(1000 / A4_PAGE_ASPECT) };
+    }
+
     try {
       const size = await loadImageSize(pages[0].image_url);
       if (!size.width || !size.height) return fallback;
@@ -465,7 +476,26 @@
     }
   }
 
+  // Serializes (re)renders so a resize arriving mid-render cannot destroy the
+  // flipbook while it is being built; a queued render always runs afterwards.
   async function renderFlipbook() {
+    if (renderInFlight) {
+      resizePending = true;
+      return;
+    }
+    renderInFlight = true;
+    try {
+      await renderFlipbookInner();
+    } finally {
+      renderInFlight = false;
+      if (resizePending) {
+        resizePending = false;
+        renderFlipbook().catch((e) => console.error(e));
+      }
+    }
+  }
+
+  async function renderFlipbookInner() {
     const container = document.getElementById("flipbook");
     const shell = document.querySelector(".book-shell");
     if (!container) return;
@@ -486,13 +516,14 @@
 
     if (pageFlip) {
       pageFlip.destroy();
+      pageFlip = null;
     }
 
     const dimensions = await getFlipDimensions(pagesCache);
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     prepareToolbarForDevice(isMobile, pagesCache.length);
-    const pageAspect = dimensions.height / dimensions.width;
+    const pageAspect = activeBook?.isA4Portrait ? 1 / A4_PAGE_ASPECT : dimensions.height / dimensions.width;
     const toolbar = document.querySelector(".viewer-toolbar");
     const toolbarHeight = toolbar ? toolbar.getBoundingClientRect().height : 0;
     const footer = document.querySelector(".brand-title");
@@ -588,6 +619,29 @@
       updateEdgeCenteringByIndex(e.data);
     });
 
+    if (!window.__flipbookResizeBound) {
+      window.__flipbookResizeBound = true;
+      let resizeRaf = 0;
+      let lastViewportWidth = window.innerWidth;
+      window.addEventListener("resize", () => {
+        const crossedDeviceClass =
+          (lastViewportWidth > 768) !== (window.innerWidth > 768);
+        const widthDelta = Math.abs(window.innerWidth - lastViewportWidth);
+        lastViewportWidth = window.innerWidth;
+        if (resizeRaf) cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(() => {
+          resizeRaf = 0;
+          if (!activeBook || !pageFlip || document.hidden) return;
+          if (
+            crossedDeviceClass ||
+            (window.matchMedia("(max-width: 768px)").matches && widthDelta > 60)
+          ) {
+            renderFlipbook().catch((e) => console.error(e));
+          }
+        });
+      });
+    }
+
     pageFlip.on("changeState", () => {
       if (!shell) return;
       const state = pageFlip.getState();
@@ -633,7 +687,7 @@
     libraryMain.classList.remove("hidden");
     grid.innerHTML = BOOK_LIBRARY.map((book) => `
       <article class="book-card">
-        <a class="book-card-cover" href="?book=${encodeURIComponent(book.id)}" aria-label="Open ${escapeHtml(book.title)}">
+        <a class="book-card-cover${book.isA4Portrait ? " book-card-cover-a4" : ""}" href="?book=${encodeURIComponent(book.id)}" aria-label="Open ${escapeHtml(book.title)}">
           <img src="${escapeHtml(book.cover_url)}" alt="Cover of ${escapeHtml(book.title)}" loading="eager" />
           <span class="book-card-open">Open book <span aria-hidden="true">→</span></span>
         </a>

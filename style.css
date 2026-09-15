@@ -234,6 +234,17 @@ body {
   object-fit: cover;
 }
 
+/* A4 portrait book covers (210mm x 297mm): true page shape, artwork letterboxed
+   inside without cropping or distortion. */
+.book-card-cover-a4 {
+  aspect-ratio: 210 / 297;
+}
+
+.book-card-cover-a4 img {
+  object-fit: contain;
+  background: #fff;
+}
+
 .book-card-open {
   position: absolute;
   inset: auto 12px 12px;
@@ -475,6 +486,13 @@ body {
   border-radius: 0;
   backface-visibility: hidden;
   transform: translateZ(0);
+}
+
+/* A4 portrait reader pages (210mm x 297mm): page geometry comes from the
+   flipbook config; artwork is letterboxed so it is never stretched or cropped. */
+.page-a4 img {
+  object-fit: contain;
+  background: #fff;
 }
 
 .order-page {
