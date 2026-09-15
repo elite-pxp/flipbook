@@ -157,6 +157,9 @@
   let flipAudioIndex = 0;
   let lastFlipSoundAt = 0;
   let mobileZoom = 1;
+  let readerZoom = 1;
+  let readerIndex = 0;
+  let readerMode = false;
   let renderInFlight = false;
   let resizePending = false;
   const requestedBookId = new URLSearchParams(location.search).get("book");
@@ -219,6 +222,7 @@
     const mobileActions = document.getElementById("mobile-actions");
     const downloadBtn = document.getElementById("download-pdf");
     const shareBtn = document.getElementById("share-page");
+    const fullscreenToggle = document.getElementById("fullscreen-toggle");
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
     if (isMobile) {
@@ -226,8 +230,13 @@
         if (el) el.style.display = "none";
       });
       if (gotoSelect) gotoSelect.style.display = "inline-block";
+      if (fullscreenToggle) fullscreenToggle.style.display = "inline-block";
     } else if (gotoSelect) {
       gotoSelect.style.display = "none";
+    }
+
+    if (fullscreenToggle) {
+      fullscreenToggle.onclick = () => toggleReaderMode();
     }
 
     if (home) {
@@ -336,6 +345,7 @@
             prompt("Copy this link:", SHARE_URL);
           }
         }
+        if (action === "fullscreen") toggleReaderMode();
         if (action === "zoomin" || action === "zoomout" || action === "zoomreset") {
           const container = document.getElementById("flipbook");
           if (!container) return;
@@ -376,6 +386,122 @@
       if (pageStatus) pageStatus.style.display = "";
     }
   }
+
+  function renderReaderPage() {
+    const reader = document.getElementById("reader-view");
+    const content = document.getElementById("reader-page-content");
+    if (!reader || !content || !pagesCache.length) return;
+
+    readerIndex = Math.max(0, Math.min(readerIndex, pagesCache.length - 1));
+    const page = pagesCache[readerIndex];
+    const srcset = page.srcset
+      ? ` srcset="${escapeHtml(page.srcset)}" sizes="100vw"`
+      : "";
+    content.innerHTML = `<img class="reader-page-image" src="${escapeHtml(page.image_url)}"${srcset} alt="Page ${readerIndex + 1}" draggable="false" />`;
+    content.style.setProperty("--reader-zoom", String(readerZoom));
+
+    const status = document.getElementById("reader-status");
+    if (status) status.textContent = `Page ${readerIndex + 1} / ${pagesCache.length}`;
+    const previous = document.getElementById("reader-prev");
+    const next = document.getElementById("reader-next");
+    if (previous) previous.disabled = readerIndex <= 0;
+    if (next) next.disabled = readerIndex >= pagesCache.length - 1;
+    updatePageIndicator(readerIndex, pagesCache.length);
+  }
+
+  function changeReaderPage(delta) {
+    const nextIndex = Math.max(0, Math.min(readerIndex + delta, pagesCache.length - 1));
+    if (nextIndex === readerIndex) return;
+    readerIndex = nextIndex;
+    renderReaderPage();
+  }
+
+  function exitReaderMode() {
+    readerMode = false;
+    document.body.classList.remove("reader-mode-active");
+    document.getElementById("reader-view")?.remove();
+    const toggle = document.getElementById("fullscreen-toggle");
+    if (toggle) toggle.textContent = "Full screen";
+    if (pageFlip) updatePageIndicator(pageFlip.getCurrentPageIndex(), pageFlip.getPageCount());
+  }
+
+  async function enterReaderMode() {
+    if (readerMode || !pagesCache.length) return;
+    readerMode = true;
+    readerIndex = pageFlip ? pageFlip.getCurrentPageIndex() : 0;
+    readerZoom = 1;
+    document.body.classList.add("reader-mode-active");
+
+    const reader = document.createElement("section");
+    reader.id = "reader-view";
+    reader.setAttribute("aria-label", "Fullscreen reader");
+    reader.innerHTML = `
+      <div class="reader-toolbar">
+        <button id="reader-exit" class="btn" type="button">Exit reader</button>
+        <span id="reader-status"></span>
+        <div class="reader-zoom-controls">
+          <button id="reader-zoom-out" class="btn" type="button" aria-label="Zoom out">−</button>
+          <button id="reader-zoom-reset" class="btn" type="button">Reset</button>
+          <button id="reader-zoom-in" class="btn" type="button" aria-label="Zoom in">+</button>
+        </div>
+      </div>
+      <button id="reader-prev" class="reader-nav reader-nav-prev" type="button" aria-label="Previous page">‹</button>
+      <div id="reader-page-content" class="reader-page-content"></div>
+      <button id="reader-next" class="reader-nav reader-nav-next" type="button" aria-label="Next page">›</button>
+    `;
+    document.getElementById("viewer-main")?.appendChild(reader);
+
+    document.getElementById("reader-exit").onclick = () => toggleReaderMode();
+    document.getElementById("reader-prev").onclick = () => changeReaderPage(-1);
+    document.getElementById("reader-next").onclick = () => changeReaderPage(1);
+    document.getElementById("reader-zoom-in").onclick = () => {
+      readerZoom = Math.min(2.4, readerZoom + 0.2);
+      renderReaderPage();
+    };
+    document.getElementById("reader-zoom-out").onclick = () => {
+      readerZoom = Math.max(1, readerZoom - 0.2);
+      renderReaderPage();
+    };
+    document.getElementById("reader-zoom-reset").onclick = () => {
+      readerZoom = 1;
+      renderReaderPage();
+    };
+
+    let startX = 0;
+    reader.addEventListener("pointerdown", (event) => {
+      startX = event.clientX;
+    });
+    reader.addEventListener("pointerup", (event) => {
+      const distance = event.clientX - startX;
+      if (Math.abs(distance) >= 45) changeReaderPage(distance < 0 ? 1 : -1);
+    });
+
+    renderReaderPage();
+    const toggle = document.getElementById("fullscreen-toggle");
+    if (toggle) toggle.textContent = "Flip view";
+    try {
+      if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch (_) {
+      // The reader remains usable when fullscreen is unavailable or denied.
+    }
+  }
+
+  function toggleReaderMode() {
+    if (readerMode) {
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+      exitReaderMode();
+    } else {
+      enterReaderMode();
+    }
+  }
+
+  document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement && readerMode) exitReaderMode();
+  });
 
   async function loadImageElement(src) {
     return new Promise((resolve, reject) => {
