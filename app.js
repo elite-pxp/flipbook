@@ -607,6 +607,23 @@
     });
   }
 
+  function waitForImage(src, timeoutMs = 6000) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      let settled = false;
+      const finish = (loaded) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        resolve(loaded);
+      };
+      const timeout = setTimeout(() => finish(false), timeoutMs);
+      img.onload = () => finish(true);
+      img.onerror = () => finish(false);
+      img.src = src;
+    });
+  }
+
   async function getFlipDimensions(pages) {
     const fallback = { width: 900, height: 600 };
     if (!pages.length) return fallback;
@@ -654,6 +671,9 @@
       return;
     }
 
+    if (shell) shell.classList.add("is-loading");
+    const firstImageLoaded = await waitForImage(pagesCache[0].image_url);
+    if (!firstImageLoaded) console.warn("First page image is still loading:", pagesCache[0].image_url);
     container.innerHTML = buildPageHtml(pagesCache, activeBook);
 
     if (!window.St || !window.St.PageFlip) {
@@ -706,6 +726,7 @@
     });
 
     pageFlip.loadFromHTML(container.querySelectorAll(".page"));
+    shell?.classList.remove("is-loading");
 
     if (!flipAudioPool.length) {
       // Create the pool lazily but skip heavy preloading; audio is fetched on
