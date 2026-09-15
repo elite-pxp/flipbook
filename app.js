@@ -95,12 +95,22 @@
     page_number,
     created_at: new Date().toISOString()
   }));
-  const PTA_2026_PREVIEW_PAGES = Array.from({ length: 21 }, (_, index) => ({
-    id: `pta-2026-preview-${index + 1}`,
-    image_url: `./assets/pta-2026/page-${String(index + 1).padStart(2, "0")}.webp?v=2`,
-    page_number: index + 1,
-    created_at: new Date().toISOString()
-  }));
+  const PTA_2026_PREVIEW_PAGES = Array.from({ length: 21 }, (_, index) => {
+    const n = String(index + 1).padStart(2, "0");
+    const fullUrl = `./assets/pta-2026/page-${n}.webp?v=2`;
+    const smallUrl = `./assets/pta-2026/small/page-${n}.webp?v=2`;
+    return {
+      id: `pta-2026-preview-${index + 1}`,
+      image_url: fullUrl,
+      small_url: smallUrl,
+      // 1080w mobile variant + 1414w full: phones download ~4.6MB total
+      // instead of ~7MB; desktop keeps full resolution.
+      srcset: `${smallUrl} 1080w, ${fullUrl} 1414w`,
+      sizes: "(max-width: 768px) 92vw, 46vw",
+      page_number: index + 1,
+      created_at: new Date().toISOString()
+    };
+  });
   const BOOK_LIBRARY = [
     {
       id: "panda-buck-playbook",
@@ -123,6 +133,7 @@
       title: "2026 PTA",
       description: "The Elite Way",
       cover_url: PTA_2026_PREVIEW_PAGES[0].image_url,
+      cover_srcset: PTA_2026_PREVIEW_PAGES[0].srcset,
       pages: PTA_2026_PREVIEW_PAGES,
       isA4Portrait: true
     }
@@ -425,9 +436,10 @@
       .map((item, idx) => {
         const loading = idx < 4 ? "eager" : "lazy";
         const density = idx === 0 || idx === lastIndex ? "hard" : "soft";
+        const srcsetAttr = item.srcset ? ` srcset="${escapeHtml(item.srcset)}" sizes="${escapeHtml(item.sizes || "100vw")}"` : "";
         return `
           <div class="page" data-density="${density}">
-            <img src="${escapeHtml(item.image_url)}" alt="" loading="${loading}" decoding="async" />
+            <img src="${escapeHtml(item.image_url)}"${srcsetAttr} alt="" loading="${loading}" decoding="async" />
           </div>
         `;
       })
@@ -460,7 +472,9 @@
     if (!pages.length) return fallback;
 
     try {
-      const size = await loadImageSize(pages[0].image_url);
+      // Prefer the small variant for the probe when available: identical aspect
+      // ratio, far fewer bytes — especially on mobile.
+      const size = await loadImageSize(pages[0].small_url || pages[0].image_url);
       if (!size.width || !size.height) return fallback;
       return { width: size.width, height: size.height };
     } catch (_) {
@@ -554,11 +568,12 @@
     pageFlip.loadFromHTML(container.querySelectorAll(".page"));
 
     if (!flipAudioPool.length) {
+      // Create the pool lazily but skip heavy preloading; audio is fetched on
+      // first flip instead of blocking page-open bandwidth (helps mobile).
       flipAudioPool = Array.from({ length: 3 }, () => {
         const audio = new Audio(FLIP_SOUND_URL);
-        audio.preload = "auto";
+        audio.preload = "none";
         audio.volume = 0.38;
-        audio.load();
         return audio;
       });
     }
@@ -644,6 +659,7 @@
           const audio = flipAudioPool[flipAudioIndex % flipAudioPool.length];
           flipAudioIndex += 1;
           lastFlipSoundAt = now;
+          if (audio.readyState === 0) audio.load();
           audio.currentTime = 0;
           audio.play().catch(() => {});
         }
@@ -680,7 +696,7 @@
     grid.innerHTML = BOOK_LIBRARY.map((book) => `
       <article class="book-card">
         <a class="book-card-cover${book.isA4Portrait ? " book-card-cover-a4" : ""}" href="?book=${encodeURIComponent(book.id)}" aria-label="Open ${escapeHtml(book.title)}">
-          <img src="${escapeHtml(book.cover_url)}" alt="Cover of ${escapeHtml(book.title)}" loading="eager" />
+          <img src="${escapeHtml(book.cover_url)}"${book.cover_srcset ? ` srcset="${escapeHtml(book.cover_srcset)}" sizes="(max-width: 768px) 44vw, 300px"` : ""} alt="Cover of ${escapeHtml(book.title)}" loading="eager" />
           <span class="book-card-open">Open book <span aria-hidden="true">→</span></span>
         </a>
         <div class="book-card-details">
