@@ -1038,7 +1038,7 @@ body {
   place-items: center;
   overflow: auto;
   padding: 68px 46px 24px;
-  touch-action: pan-y;
+  touch-action: none;
 }
 
 .reader-page-image {

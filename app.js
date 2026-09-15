@@ -470,14 +470,54 @@
       renderReaderPage();
     };
 
+    const activePointers = new Map();
     let startX = 0;
+    let pinchStartDistance = 0;
+    let pinchStartZoom = 1;
+    let gestureMoved = false;
+    const distanceBetweenPointers = () => {
+      const points = [...activePointers.values()];
+      if (points.length < 2) return 0;
+      return Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+    };
+    const applyReaderZoom = () => {
+      document.getElementById("reader-page-content")?.style.setProperty("--reader-zoom", String(readerZoom));
+    };
+
     reader.addEventListener("pointerdown", (event) => {
+      activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
       startX = event.clientX;
+      gestureMoved = false;
+      if (activePointers.size === 2) {
+        pinchStartDistance = distanceBetweenPointers();
+        pinchStartZoom = readerZoom;
+      }
     });
+
+    reader.addEventListener("pointermove", (event) => {
+      if (!activePointers.has(event.pointerId)) return;
+      activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (activePointers.size < 2 || !pinchStartDistance) return;
+      event.preventDefault();
+      const scale = distanceBetweenPointers() / pinchStartDistance;
+      readerZoom = Math.max(1, Math.min(2.4, pinchStartZoom * scale));
+      gestureMoved = true;
+      applyReaderZoom();
+    });
+
+    const finishPointer = (event) => {
+      activePointers.delete(event.pointerId);
+      if (activePointers.size === 0) pinchStartDistance = 0;
+    };
+
     reader.addEventListener("pointerup", (event) => {
       const distance = event.clientX - startX;
-      if (Math.abs(distance) >= 45) changeReaderPage(distance < 0 ? 1 : -1);
+      if (!gestureMoved && activePointers.size === 1 && Math.abs(distance) >= 45) {
+        changeReaderPage(distance < 0 ? 1 : -1);
+      }
+      finishPointer(event);
     });
+    reader.addEventListener("pointercancel", finishPointer);
 
     renderReaderPage();
     const toggle = document.getElementById("fullscreen-toggle");
