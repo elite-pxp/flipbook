@@ -95,6 +95,12 @@
     page_number,
     created_at: new Date().toISOString()
   }));
+  const PTA_2026_PREVIEW_PAGES = Array.from({ length: 21 }, (_, index) => ({
+    id: `pta-2026-preview-${index + 1}`,
+    image_url: `./assets/pta-2026/page-${String(index + 1).padStart(2, "0")}.webp`,
+    page_number: index + 1,
+    created_at: new Date().toISOString()
+  }));
   const BOOK_LIBRARY = [
     {
       id: "panda-buck-playbook",
@@ -111,6 +117,13 @@
       pages: HOMEWORK_BOOKLET_PREVIEW_PAGES,
       isPreview: true,
       orderUrl: ""
+    },
+    {
+      id: "pta-2026",
+      title: "2026 PTA",
+      description: "The Elite Way",
+      cover_url: PTA_2026_PREVIEW_PAGES[0].image_url,
+      pages: PTA_2026_PREVIEW_PAGES
     }
   ];
   const FLIP_SOUND_URL = "https://res.cloudinary.com/dozcy2jve/video/upload/v1777488525/images/188485__rofd__flip-page_rz2es2.wav";
