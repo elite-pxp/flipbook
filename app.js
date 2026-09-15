@@ -91,8 +91,8 @@
     ["1sKQZClnoYw2Im0XAln86yCa6jvuw5-ln", 11]
   ].map(([id, page_number]) => ({
     id: `homework-preview-${page_number}`,
-    image_url: `https://drive.google.com/thumbnail?id=${id}&sz=w1600`,
     small_url: `https://drive.google.com/thumbnail?id=${id}&sz=w800`,
+    image_url: `https://drive.google.com/thumbnail?id=${id}&sz=w800`,
     srcset: `https://drive.google.com/thumbnail?id=${id}&sz=w800 800w, https://drive.google.com/thumbnail?id=${id}&sz=w1600 1600w`,
     sizes: "(max-width: 768px) 92vw, 46vw",
     page_number,
